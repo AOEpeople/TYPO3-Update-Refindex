@@ -24,6 +24,7 @@
 ***************************************************************/
 
 require_once(t3lib_extMgm::extPath('scheduler') . 'class.tx_scheduler_task.php');
+require_once PATH_tx_update_refindex . 'Classes/Typo3/RefIndex.php';
 
 /**
  * scheduler-task to update refindex of TYPO3
@@ -37,6 +38,10 @@ class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask extends tx_scheduler_Task {
 	 * @var string
 	 */
 	public $updateRefindexSelectedTables;
+	/**
+	 * @var Tx_UpdateRefindex_Typo3_RefIndex
+	 */
+	private $refIndex;
 
 	/**
 	 * execute the task
@@ -45,7 +50,7 @@ class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask extends tx_scheduler_Task {
 	public function execute() {
 		$shellExitCode = TRUE;
 		try {
-			// update refIndex
+			$this->getRefIndex()->setSelectedTables( $this->getSelectedTables() )->update();
 		} catch (Exception $e) {
 			$shellExitCode = FALSE;
 		}
@@ -64,5 +69,15 @@ class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask extends tx_scheduler_Task {
 	 */
 	public function setSelectedTables(array $selectedTables) {
 		$this->updateRefindexSelectedTables = implode(',', $selectedTables);
+	}
+
+	/**
+	 * @return Tx_UpdateRefindex_Typo3_RefIndex
+	 */
+	protected function getRefIndex() {
+		if($this->refIndex === NULL) {
+			$this->refIndex = t3lib_div::makeInstance('Tx_UpdateRefindex_Typo3_RefIndex');
+		}
+		return $this->refIndex;
 	}
 }
