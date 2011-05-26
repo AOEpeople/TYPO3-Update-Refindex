@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2011 Max Beer <max.beer@aoemedia.de>, AOE media GmbH
+*  (c) 2011 AOE media GmbH <dev@aoemedia.de>
 *  			
 *  All rights reserved
 *
@@ -44,30 +44,26 @@ class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements tx_s
 	 * @return unknown
 	 */
 	public function getAdditionalFields(array &$taskInfo, $task, tx_scheduler_Module $parentObject) {
+		// define value for fields
 		if ($parentObject->CMD == 'add') {
-			$taskInfo[self::FIELD_SELECTED_TABLES] = '';
+			$taskInfo[self::FIELD_SELECTED_TABLES] = array();
 		} elseif($parentObject->CMD == 'edit') {
 			$taskInfo[self::FIELD_SELECTED_TABLES] = $task->getSelectedTables();
 		} else {
-			$taskInfo[self::FIELD_SELECTED_TABLES] = '';
+			$taskInfo[self::FIELD_SELECTED_TABLES] = array();
 		}
 
-		# Get configuration (markup & labels) for additional fields
-		$optionsSelectedTables = array();
-		foreach( $this->getExistingTables() as $existingTable) {
-			$optionsSelectedTables[$existingTable] = $existingTable;
-		}
-
+		// Get configuration (markup & labels) for additional fields
 		$additionalFields = array(
 			self::FIELD_SELECTED_TABLES => array(
-				'code' => $this->getSelector(self::FIELD_SELECTED_TABLES, $optionsSelectedTables, $taskInfo[self::FIELD_SELECTED_TABLES]),
+				'code' => $this->getSelectBox($taskInfo[self::FIELD_SELECTED_TABLES]),
 				'label' => $GLOBALS['LANG']->sL(self::LL_REFERENCE.':scheduler_task.updateRefindex.fieldSelectedTables.label')
 			),
 		);
 
 		return $additionalFields;
 	}
-	
+
     /**
      * @param array $submittedData
      * @param tx_scheduler_Task $task
@@ -75,28 +71,22 @@ class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements tx_s
 	public function saveAdditionalFields(array $submittedData, tx_scheduler_Task $task) {
 		$task->setSelectedTables( $submittedData[self::FIELD_SELECTED_TABLES] );
 	}
-	
+
 	/**
 	 * @param array &$submittedData
 	 * @param tx_scheduler_Module $parentObject
 	 * @return boolean
 	 */
 	public function validateAdditionalFields(array &$submittedData, tx_scheduler_Module $parentObject) {
-		global $TCA;
-
-		// transform array to string (because we must save the data as string)
-		$submittedData[self::FIELD_SELECTED_TABLES] = implode(',', $submittedData[self::FIELD_SELECTED_TABLES]);
-
 		$fieldSelectedTablesIsValid = TRUE;
 
 		// check, if field 'selectedTables' is valid
-		if(empty($submittedData[self::FIELD_SELECTED_TABLES])) {
+		if(count($submittedData[self::FIELD_SELECTED_TABLES]) === 0) {
 			$fieldSelectedTablesIsValid = FALSE;
 			$parentObject->addMessage($GLOBALS['LANG']->sL(self::LL_REFERENCE.':scheduler_task.updateRefindex.fieldSelectedTables.invalid.isEmpty'), t3lib_FlashMessage::ERROR);
 		} else {
 			$existingTables = $this->getExistingTables();
-			$selectedTables = explode(',', $submittedData[self::FIELD_SELECTED_TABLES]);
-			foreach($selectedTables as $selectedTable) {
+			foreach($submittedData[self::FIELD_SELECTED_TABLES] as $selectedTable) {
 				if(array_search($selectedTable, $existingTables) === FALSE) {
 					$fieldSelectedTablesIsValid = FALSE;
 					$errorMessage = $GLOBALS['LANG']->sL(self::LL_REFERENCE.':scheduler_task.updateRefindex.fieldSelectedTables.invalid.tableNotExists');
@@ -119,28 +109,28 @@ class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements tx_s
 		return $existingTables;
 	}
 	/**
-	 * Generates HTML selector for provided options.
+	 * @return array
+	 */
+	private function getOptionsForSelectBox() {
+		$optionsSelectedTables = array();
+		foreach( $this->getExistingTables() as $existingTable) {
+			$optionsSelectedTables[$existingTable] = $existingTable;
+		}
+		return $optionsSelectedTables;
+	}
+	/**
+	 * Generates HTML selectbox for field 'selectedTables'.
 	 * 
-	 * @param  string	$name		Selector name ( HTML name attribute ).
-	 * @param  array	$options	Key value pair of option value & corresponding label.
-	 * @param  string	$selected	Currently selected option value.
+	 * @param  array	$selected	Currently selected option value.
 	 * @return string				Select tag HTML. 
 	 */
-	private function getSelector( $name, array $options, $selected) {
-		// transform data from string to array
-		$selected = explode(',', $selected);
-
-		$contentArray = array( '<select id="task_'.$name.'" name="tx_scheduler['.$name.'][]" size="20" multiple="multiple">' );
+	private function getSelectBox(array $selected) {
+		$contentArray = array( '<select id="task_'.self::FIELD_SELECTED_TABLES.'" name="tx_scheduler['.self::FIELD_SELECTED_TABLES.'][]" size="20" multiple="multiple">' );
+		$options = $this->getOptionsForSelectBox();
 
 		if ( 0 < count($options) ) {
 			foreach ( $options as $value => $label ) {
-				if(is_array($selected)) {
-					$optionIsSelected = in_array($value, $selected);
-				} else {
-					$optionIsSelected = $value === $selected;
-				}
-
-				$selectAttribute = ($optionIsSelected) ? ' selected="selected"' : '';
+				$selectAttribute = in_array($value, $selected) ? ' selected="selected"' : '';
 				$contentArray[] = '<option value="'.$value.'"'.$selectAttribute.'>'.$label.'</option>';
 			}
 		} else {
