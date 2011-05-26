@@ -30,7 +30,7 @@ require_once PATH_tx_update_refindex . 'Classes/Typo3/RefIndex.php';
  * scheduler-task to update refindex of TYPO3
  * 
  * @package update_refindex
- * @subpackage Typo3
+ * @subpackage Scheduler
  */
 class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask extends tx_scheduler_Task {
 	/**

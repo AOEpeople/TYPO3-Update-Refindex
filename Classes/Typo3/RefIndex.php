@@ -101,22 +101,12 @@ class Tx_UpdateRefindex_Typo3_RefIndex {
 		$allRecs = $this->getTypo3Db()->exec_SELECTgetRows('uid',$tableName,'1=1');	//.t3lib_BEfunc::deleteClause($tableName)
 		$uidList = array(0);
 		foreach ($allRecs as $recdat)	{
-			$result = $this->createT3libRefindex()->updateRefIndexTable($tableName,$recdat['uid'],FALSE);
+			$this->createT3libRefindex()->updateRefIndexTable($tableName,$recdat['uid'],FALSE);
 			$uidList[]= $recdat['uid'];
 		}
 
 		// Searching lost indexes for this table:
 		$where = 'tablename='.$this->getTypo3Db()->fullQuoteStr($tableName,'sys_refindex').' AND recuid NOT IN ('.implode(',',$uidList).')';
-		$lostIndexes = $this->getTypo3Db()->exec_SELECTgetRows('hash','sys_refindex',$where);
-		if (count($lostIndexes))	{
-			$this->getTypo3Db()->exec_DELETEquery('sys_refindex',$where);
-		}
-
-		// Searching lost indexes for non-existing tables:
-		$where = 'tablename NOT IN ('.implode(',',$this->getTypo3Db()->fullQuoteArray(array($tableName),'sys_refindex')).')';
-		$lostTables = $this->getTypo3Db()->exec_SELECTgetRows('hash','sys_refindex',$where);
-		if (count($lostTables))	{
-			$this->getTypo3Db()->exec_DELETEquery('sys_refindex',$where);
-		}
+		$this->getTypo3Db()->exec_DELETEquery('sys_refindex',$where);
 	}
 }

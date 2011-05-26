@@ -1,0 +1,7 @@
+<phpunit>
+	<testsuites>
+		<testsuite name="update_refindex">
+			<directory suffix="Test.php">./</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>
