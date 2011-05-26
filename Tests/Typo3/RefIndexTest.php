@@ -91,7 +91,10 @@ class Tx_UpdateRefindex_Typo3_RefIndexTest extends tx_phpunit_testcase {
 		// 2.2. Searching lost indexes of table2
 		$this->typo3Db->expects ( $this->at(4) )->method ( 'fullQuoteStr' )->with($selectedTables[1],'sys_refindex')->will ( $this->returnValue ( $selectedTables[1] ) );
 		$this->typo3Db->expects ( $this->at(5) )->method ( 'exec_DELETEquery' )->with('sys_refindex', 'tablename='.$selectedTables[1].' AND recuid NOT IN (0,'.$recordsOfTable2[0]['uid'].','.$recordsOfTable2[1]['uid'].','.$recordsOfTable2[2]['uid'].')');
-
+		// 3. delete lost indexes for non existing tables
+		$this->typo3Db->expects ( $this->at(6) )->method ( 'fullQuoteArray' )->with($selectedTables,'sys_refindex')->will ( $this->returnValue ( $selectedTables ) );
+		$this->typo3Db->expects ( $this->at(7) )->method ( 'exec_DELETEquery' )->with('sys_refindex', 'tablename NOT IN ('.implode(',',$selectedTables).')');
+		
 		/**
 		 * define behaviour of object t3libRefindex
 		 */

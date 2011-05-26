@@ -53,10 +53,16 @@ class Tx_UpdateRefindex_Typo3_RefIndex {
 	 * update refIndex of selected tables
 	 */
 	public function update() {
+		// update index of selected tables
 		foreach($this->getSelectedTables() as $selectedTable) {
 			if(array_search($selectedTable, $this->getExistingTables()) !== FALSE) {
 				$this->updateTable( $selectedTable );
 			}
+		}
+
+		// delete lost indexes ONLY if index of ALL tables where updated
+		if(count($this->getExistingTables()) === count($this->getSelectedTables())) {
+			$this->deleteLostIndexes();
 		}
 	}
 
@@ -65,6 +71,14 @@ class Tx_UpdateRefindex_Typo3_RefIndex {
 	 */
 	protected function createT3libRefindex() {
 		return t3lib_div::makeInstance('t3lib_refindex');
+	}
+	/**
+	 * Searching lost indexes for non-existing tables
+	 * this code is inspired by the code of method 'updateIndex' in class 't3lib_refindex'
+	 */
+	protected function deleteLostIndexes() {
+		$where = 'tablename NOT IN ('.implode(',',$this->getTypo3Db()->fullQuoteArray($this->getExistingTables(),'sys_refindex')).')';
+		$this->getTypo3Db()->exec_DELETEquery('sys_refindex',$where);
 	}
 	/**
 	 * @return array
