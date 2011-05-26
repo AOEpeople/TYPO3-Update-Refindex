@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>database</type>
+		<description>Language labels for database tables/fields belonging to extension 'extracache'</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="scheduler_task_updateRefindex.name">Update Refindex of TYPO3</label>
+			<label index="scheduler_task_updateRefindex.description">updates refindex of TYPO3</label>
+			<label index="scheduler_task.updateRefindex.fieldSelectedTables.label">Selected Tables</label>
+			<label index="scheduler_task.updateRefindex.fieldSelectedTables.invalid.isEmpty">No Tables Selected</label>
+			<label index="scheduler_task.updateRefindex.fieldSelectedTables.invalid.tableNotExists">Selected Table ###NOT_EXISTING_TABLE### does not exist</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="scheduler_task_updateRefindex.name">Aktualisiere Refindex von TYPO3</label>
+			<label index="scheduler_task_updateRefindex.description">Aktualisiert Refindex von TYPO3</label>
+			<label index="scheduler_task.updateRefindex.fieldSelectedTables.label">Ausgewaehlte Tabellen</label>
+			<label index="scheduler_task.updateRefindex.fieldSelectedTables.invalid.isEmpty">Keine Tabellen ausgewaehlt</label>
+			<label index="scheduler_task.updateRefindex.fieldSelectedTables.invalid.tableNotExists">Ausgewaehlte Tabelle ###NOT_EXISTING_TABLE### existiert nicht</label>
+		</languageKey>
+	</data>
+</T3locallang>
