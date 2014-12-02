@@ -23,9 +23,6 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-require_once(t3lib_extMgm::extPath('scheduler') . 'class.tx_scheduler_task.php');
-require_once PATH_tx_update_refindex . 'Classes/Typo3/RefIndex.php';
-
 /**
  * scheduler-task to update refindex of TYPO3
  * 

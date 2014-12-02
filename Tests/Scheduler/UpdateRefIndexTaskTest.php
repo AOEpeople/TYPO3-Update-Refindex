@@ -23,8 +23,6 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-require_once PATH_tx_update_refindex . 'Classes/Scheduler/UpdateRefIndexTask.php';
-
 /**
  * Tests class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask
  * 
