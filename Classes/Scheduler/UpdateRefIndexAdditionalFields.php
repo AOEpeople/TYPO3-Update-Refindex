@@ -96,8 +96,7 @@ class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements tx_s
 	 * @return array
 	 */
 	private function getOptionsForSelectBox() {
-		global $TCA;
-		$existingTables = array_keys( $TCA );
+		$existingTables = array_keys($GLOBALS['TCA']);
 		sort($existingTables);
 
 		$optionsSelectedTables = array();

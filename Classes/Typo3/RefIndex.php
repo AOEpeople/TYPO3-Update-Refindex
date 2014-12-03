@@ -23,6 +23,8 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * scheduler-task to update refindex of TYPO3
  * 
@@ -65,10 +67,10 @@ class Tx_UpdateRefindex_Typo3_RefIndex {
 	}
 
 	/**
-	 * @return t3lib_refindex
+	 * @return \TYPO3\CMS\Core\Database\ReferenceIndex
 	 */
 	protected function createT3libRefindex() {
-		return t3lib_div::makeInstance('t3lib_refindex');
+        return GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Database\\ReferenceIndex');
 	}
 	/**
 	 * Searching lost indexes for non-existing tables
@@ -83,8 +85,7 @@ class Tx_UpdateRefindex_Typo3_RefIndex {
 	 */
 	protected function getExistingTables() {
 		if($this->existingTables === NULL) {
-			global $TCA;
-			$this->existingTables = array_keys( $TCA );
+			$this->existingTables = array_keys($GLOBALS['TCA']);
 			sort($this->existingTables);
 		}
 		return $this->existingTables;
@@ -96,7 +97,7 @@ class Tx_UpdateRefindex_Typo3_RefIndex {
 		return $this->selectedTables;
 	}
 	/**
-	 * @return t3lib_DB
+	 * @return \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	protected function getTypo3Db() {
 		global $TYPO3_DB;
@@ -113,7 +114,7 @@ class Tx_UpdateRefindex_Typo3_RefIndex {
 		$allRecs = $this->getTypo3Db()->exec_SELECTgetRows('uid',$tableName,'1=1');	//.t3lib_BEfunc::deleteClause($tableName)
 		$uidList = array(0);
 		foreach ($allRecs as $recdat)	{
-			$this->createT3libRefindex()->updateRefIndexTable($tableName,$recdat['uid'],FALSE);
+			$this->createT3libRefindex()->updateRefIndexTable($tableName,$recdat['uid']);
 			$uidList[]= $recdat['uid'];
 		}
 

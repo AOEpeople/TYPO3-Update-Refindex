@@ -23,6 +23,8 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * scheduler-task to update refindex of TYPO3
  * 
@@ -73,7 +75,7 @@ class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask extends tx_scheduler_Task {
 	 */
 	protected function getRefIndex() {
 		if($this->refIndex === NULL) {
-			$this->refIndex = t3lib_div::makeInstance('Tx_UpdateRefindex_Typo3_RefIndex');
+            $this->refIndex = GeneralUtility::makeInstance('Tx_UpdateRefindex_Typo3_RefIndex');
 		}
 		return $this->refIndex;
 	}
