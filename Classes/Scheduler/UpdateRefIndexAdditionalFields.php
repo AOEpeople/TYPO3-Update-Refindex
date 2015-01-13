@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2011 AOE media GmbH <dev@aoemedia.de>
+*  (c) 2011 AOE GmbH <dev@aoe.com>
 *  			
 *  All rights reserved
 *
@@ -29,7 +29,7 @@
  * @package update_refindex
  * @subpackage Scheduler
  */
-class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements tx_scheduler_AdditionalFieldProvider {
+class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements \TYPO3\CMS\Scheduler\AdditionalFieldProviderInterface {
 	/**
 	 * Field name constants
 	 */
@@ -41,10 +41,10 @@ class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements tx_s
 	/**
 	 * @param array &$taskInfo
 	 * @param unknown_type $task
-	 * @param tx_scheduler_Module $parentObject
+	 * @param \TYPO3\CMS\Scheduler\Controller\SchedulerModuleController $parentObject
 	 * @return unknown
 	 */
-	public function getAdditionalFields(array &$taskInfo, $task, tx_scheduler_Module $parentObject) {
+	public function getAdditionalFields(array &$taskInfo, $task, \TYPO3\CMS\Scheduler\Controller\SchedulerModuleController $parentObject) {
 		// define value for fields
 		if ($parentObject->CMD == 'add') {
 			$taskInfo[self::FIELD_SELECTED_TABLES] = array();
@@ -67,24 +67,24 @@ class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements tx_s
 
     /**
      * @param array $submittedData
-     * @param tx_scheduler_Task $task
+     * @param \TYPO3\CMS\Scheduler\Task\AbstractTask $task
      */
-	public function saveAdditionalFields(array $submittedData, tx_scheduler_Task $task) {
+	public function saveAdditionalFields(array $submittedData, \TYPO3\CMS\Scheduler\Task\AbstractTask $task) {
 		$task->setSelectedTables( $submittedData[self::FIELD_SELECTED_TABLES] );
 	}
 
 	/**
 	 * @param array &$submittedData
-	 * @param tx_scheduler_Module $parentObject
+	 * @param \TYPO3\CMS\Scheduler\Controller\SchedulerModuleController $parentObject
 	 * @return boolean
 	 */
-	public function validateAdditionalFields(array &$submittedData, tx_scheduler_Module $parentObject) {
+	public function validateAdditionalFields(array &$submittedData, \TYPO3\CMS\Scheduler\Controller\SchedulerModuleController $parentObject) {
 		$fieldSelectedTablesIsValid = TRUE;
 
 		// check, if field 'selectedTables' is valid
 		if(count($submittedData[self::FIELD_SELECTED_TABLES]) === 0) {
 			$fieldSelectedTablesIsValid = FALSE;
-			$parentObject->addMessage($GLOBALS['LANG']->sL(self::LL_REFERENCE.':scheduler_task.updateRefindex.fieldSelectedTables.invalid.isEmpty'), t3lib_FlashMessage::ERROR);
+			$parentObject->addMessage($GLOBALS['LANG']->sL(self::LL_REFERENCE.':scheduler_task.updateRefindex.fieldSelectedTables.invalid.isEmpty'), \TYPO3\CMS\Core\Messaging\FlashMessage::ERROR);
 		}
 
 		return $fieldSelectedTablesIsValid;

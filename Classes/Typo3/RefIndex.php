@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2011 AOE media GmbH <dev@aoemedia.de>
+*  (c) 2011 AOE GmbH <dev@aoe.com>
 *  			
 *  All rights reserved
 *
@@ -23,7 +23,7 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-use \TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * scheduler-task to update refindex of TYPO3
@@ -74,7 +74,7 @@ class Tx_UpdateRefindex_Typo3_RefIndex {
 	}
 	/**
 	 * Searching lost indexes for non-existing tables
-	 * this code is inspired by the code of method 'updateIndex' in class 't3lib_refindex'
+	 * this code is inspired by the code of method 'updateIndex' in class '\TYPO3\CMS\Core\Database\ReferenceIndex'
 	 */
 	protected function deleteLostIndexes() {
 		$where = 'tablename NOT IN ('.implode(',',$this->getTypo3Db()->fullQuoteArray($this->getExistingTables(),'sys_refindex')).')';
@@ -105,7 +105,7 @@ class Tx_UpdateRefindex_Typo3_RefIndex {
 	}
 	/**
 	 * update table
-	 * this code is inspired by the code of method 'updateIndex' in class 't3lib_refindex'
+	 * this code is inspired by the code of method 'updateIndex' in class '\TYPO3\CMS\Core\Database\ReferenceIndex'
 	 * 
 	 * @param string $tableName
 	 */

@@ -35,11 +35,11 @@ class Tx_UpdateRefindex_Typo3_RefIndexTest extends tx_phpunit_testcase {
 	 */
 	private $refIndex;
 	/**
-	 * @var t3lib_refindex
+	 * @var \TYPO3\CMS\Core\Database\ReferenceIndex
 	 */
 	private $t3libRefindex;
 	/**
-	 * @var t3lib_DB
+	 * @var \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	private $typo3Db;
 
@@ -47,8 +47,8 @@ class Tx_UpdateRefindex_Typo3_RefIndexTest extends tx_phpunit_testcase {
 	 * Prepares the environment before running a test.
 	 */
 	protected function setUp() {
-		$this->t3libRefindex = $this->getMock( 't3lib_refindex', array(), array(), '', false );
-		$this->typo3Db = $this->getMock( 't3lib_DB', array(), array(), '', false );
+		$this->t3libRefindex = $this->getMock( '\TYPO3\CMS\Core\Database\ReferenceIndex', array(), array(), '', false );
+		$this->typo3Db = $this->getMock( '\TYPO3\CMS\Core\Database\DatabaseConnection', array(), array(), '', false );
 		$this->refIndex = $this->getMock( 'Tx_UpdateRefindex_Typo3_RefIndex', array('createT3libRefindex','getExistingTables','getTypo3Db'));
 		$this->refIndex->expects ( $this->any () )->method ( 'createT3libRefindex' )->will ( $this->returnValue ( $this->t3libRefindex ) );
 		$this->refIndex->expects ( $this->any () )->method ( 'getTypo3Db' )->will ( $this->returnValue ( $this->typo3Db ) );

@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2011 AOE media GmbH <dev@aoemedia.de>
+*  (c) 2011 AOE GmbH <dev@aoe.com>
 *  			
 *  All rights reserved
 *
@@ -23,7 +23,7 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-use \TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * scheduler-task to update refindex of TYPO3
@@ -31,7 +31,7 @@ use \TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package update_refindex
  * @subpackage Scheduler
  */
-class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask extends tx_scheduler_Task {
+class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask extends \TYPO3\CMS\Scheduler\Task\AbstractTask {
 	/**
 	 * commma-separated list of tables
 	 * @var string
