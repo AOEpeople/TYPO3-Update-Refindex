@@ -3,7 +3,7 @@ if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-define ( 'PATH_tx_update_refindex', t3lib_extMgm::extPath ( $_EXTKEY ) );
+define ( 'PATH_tx_update_refindex', \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath ( $_EXTKEY ) );
 
 if (TYPO3_MODE == 'BE') {
 	// register scheduler-task to update refindex of TYPO3
@@ -12,5 +12,5 @@ if (TYPO3_MODE == 'BE') {
 		'title'            => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_db.xml:scheduler_task_updateRefindex.name',
 		'description'      => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_db.xml:scheduler_task_updateRefindex.description',
 		'additionalFields' => 'tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields',
-	);	
+	);
 }
