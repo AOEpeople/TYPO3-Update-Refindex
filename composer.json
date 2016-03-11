@@ -1,0 +1,39 @@
+{
+    "name": "aoe/update-refindex",
+    "description": "extension contains scheduler-task to update refindex of TYPO3",
+    "type": "typo3-cms-extension",
+    "homepage": "https://forge.typo3.org/projects/extension-update_refindex",
+    "license": "GPL-3.0",
+    "support": {
+        "email": "dev@aoe.com",
+        "issues": "https://forge.typo3.org/projects/extension-update_refindex/issues",
+        "source": "https://forge.typo3.org/projects/extension-update_refindex"
+    },
+    "authors": [
+        {
+            "name": "AOE GmbH",
+            "email": "dev@aoe.com",
+            "homepage": "http://www.aoe.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.0",
+        "typo3/cms-core": "*"
+    },
+    "require-dev": {
+        "typo3/cms": "6.2.*",
+        "phpunit/phpunit": "4.8.*",
+        "phpunit/phpcov": "2.0.*",
+        "squizlabs/php_codesniffer": "2.3.*",
+        "sebastian/phpcpd": "2.0.*",
+        "phpmd/phpmd": "2.2.*"
+    },
+    "replace": {
+        "update-refindex": "*"
+    },
+    "keywords": [
+        "TYPO3",
+        "extbase",
+        "update-refindex"
+    ]
+}
