@@ -1,5 +1,5 @@
 {
-    "name": "aoe/update-refindex",
+    "name": "typo3-ter/update-refindex",
     "description": "extension contains scheduler-task to update refindex of TYPO3",
     "type": "typo3-cms-extension",
     "homepage": "https://forge.typo3.org/projects/extension-update_refindex",
