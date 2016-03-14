@@ -29,7 +29,7 @@
         "phpmd/phpmd": "2.2.*"
     },
     "replace": {
-        "update-refindex": "*"
+        "update_refindex": "*"
     },
     "keywords": [
         "TYPO3",
