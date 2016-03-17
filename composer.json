@@ -21,7 +21,6 @@
         "typo3/cms-core": "*"
     },
     "require-dev": {
-        "typo3/cms": "6.2.*",
         "phpunit/phpunit": "4.8.*",
         "phpunit/phpcov": "2.0.*",
         "squizlabs/php_codesniffer": "2.3.*",
