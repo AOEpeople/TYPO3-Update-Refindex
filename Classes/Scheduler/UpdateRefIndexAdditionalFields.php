@@ -1,4 +1,6 @@
 <?php
+namespace AOE\UpdateRefindex\Scheduler;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -24,6 +26,7 @@
  ***************************************************************/
 use TYPO3\CMS\Scheduler\AdditionalFieldProviderInterface;
 use TYPO3\CMS\Scheduler\Controller\SchedulerModuleController;
+use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
 /**
  * class to define additional fields
@@ -31,7 +34,7 @@ use TYPO3\CMS\Scheduler\Controller\SchedulerModuleController;
  * @package update_refindex
  * @subpackage Scheduler
  */
-class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
+class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
 {
     /**
      * Field name constants
@@ -71,9 +74,9 @@ class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements Addi
 
     /**
      * @param array $submittedData
-     * @param \TYPO3\CMS\Scheduler\Task\AbstractTask $task
+     * @param AbstractTask $task
      */
-    public function saveAdditionalFields(array $submittedData, \TYPO3\CMS\Scheduler\Task\AbstractTask $task)
+    public function saveAdditionalFields(array $submittedData, AbstractTask $task)
     {
         $task->setSelectedTables($submittedData[self::FIELD_SELECTED_TABLES]);
     }

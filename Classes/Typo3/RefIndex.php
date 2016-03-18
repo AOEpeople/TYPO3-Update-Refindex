@@ -1,4 +1,6 @@
 <?php
+namespace AOE\UpdateRefindex\Typo3;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,7 +24,6 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -31,7 +32,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package update_refindex
  * @subpackage Typo3
  */
-class Tx_UpdateRefindex_Typo3_RefIndex
+class RefIndex
 {
     /**
      * @var array
@@ -43,8 +44,8 @@ class Tx_UpdateRefindex_Typo3_RefIndex
     private $selectedTables = array();
 
     /**
-     * @param    array $selectedTables
-     * @return    Tx_UpdateRefindex_Typo3_RefIndex
+     * @param array $selectedTables
+     * @return RefIndex
      */
     public function setSelectedTables(array $selectedTables)
     {

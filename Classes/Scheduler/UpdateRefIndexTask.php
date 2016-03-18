@@ -1,4 +1,6 @@
 <?php
+namespace AOE\UpdateRefindex\Scheduler;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,7 +24,7 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
+use AOE\UpdateRefindex\Typo3\RefIndex;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
@@ -32,7 +34,7 @@ use TYPO3\CMS\Scheduler\Task\AbstractTask;
  * @package update_refindex
  * @subpackage Scheduler
  */
-class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask extends AbstractTask
+class UpdateRefIndexTask extends AbstractTask
 {
     /**
      * commma-separated list of tables
@@ -40,7 +42,7 @@ class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask extends AbstractTask
      */
     public $updateRefindexSelectedTables;
     /**
-     * @var Tx_UpdateRefindex_Typo3_RefIndex
+     * @var RefIndex
      */
     private $refIndex;
 
@@ -76,12 +78,12 @@ class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask extends AbstractTask
     }
 
     /**
-     * @return Tx_UpdateRefindex_Typo3_RefIndex
+     * @return RefIndex
      */
     protected function getRefIndex()
     {
         if ($this->refIndex === null) {
-            $this->refIndex = GeneralUtility::makeInstance('Tx_UpdateRefindex_Typo3_RefIndex');
+            $this->refIndex = GeneralUtility::makeInstance('AOE\\UpdateRefindex\\Typo3\\RefIndex');
         }
         return $this->refIndex;
     }

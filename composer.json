@@ -27,6 +27,11 @@
         "sebastian/phpcpd": "2.0.*",
         "phpmd/phpmd": "2.2.*"
     },
+    "autoload": {
+        "psr-4": {
+            "AOE\\UpdateRefindex\\": "Classes"
+        }
+    },
     "replace": {
         "update_refindex": "*"
     },
