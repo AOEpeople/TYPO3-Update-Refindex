@@ -29,43 +29,47 @@
  * @package update_refindex
  * @subpackage Tests
  */
-class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTaskTest extends tx_phpunit_testcase {
-	/**
-	 * @var Tx_UpdateRefindex_Typo3_RefIndex
-	 */
-	private $refIndex;
-	/**
-	 * @var Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask
-	 */
-	private $task;
-	
-	/**
-	 * Prepares the environment before running a test.
-	 */
-	protected function setUp() {
-		$this->refIndex = $this->getMock( 'Tx_UpdateRefindex_Typo3_RefIndex', array(), array(), '', false );
-		$this->task = $this->getMock( 'Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask', array('getRefIndex'));
-		$this->task->expects ( $this->any () )->method ( 'getRefIndex' )->will ( $this->returnValue ( $this->refIndex ) );
-	}
-	/**
-	 * Cleans up the environment after running a test.
-	 */
-	protected function tearDown() {
-		unset( $this->refIndex );
-		unset( $this->task );
-	}
+class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTaskTest extends tx_phpunit_testcase
+{
+    /**
+     * @var Tx_UpdateRefindex_Typo3_RefIndex
+     */
+    private $refIndex;
+    /**
+     * @var Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask
+     */
+    private $task;
+    
+    /**
+     * Prepares the environment before running a test.
+     */
+    protected function setUp()
+    {
+        $this->refIndex = $this->getMock('Tx_UpdateRefindex_Typo3_RefIndex', array(), array(), '', false);
+        $this->task = $this->getMock('Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask', array('getRefIndex'));
+        $this->task->expects($this->any())->method('getRefIndex')->will($this->returnValue($this->refIndex));
+    }
+    /**
+     * Cleans up the environment after running a test.
+     */
+    protected function tearDown()
+    {
+        unset($this->refIndex);
+        unset($this->task);
+    }
 
-	/**
-	 * Test method execute
-	 * @test
-	 */
-	public function execute() {
-		$selectedTables = array('tablename1','tablename2');
+    /**
+     * Test method execute
+     * @test
+     */
+    public function execute()
+    {
+        $selectedTables = array('tablename1','tablename2');
 
-		$this->refIndex->expects ( $this->once () )->method ( 'setSelectedTables' )->with( $selectedTables )->will ( $this->returnValue ( $this->refIndex ) );
-		$this->refIndex->expects ( $this->once () )->method ( 'update' );
+        $this->refIndex->expects($this->once())->method('setSelectedTables')->with($selectedTables)->will($this->returnValue($this->refIndex));
+        $this->refIndex->expects($this->once())->method('update');
 
-		$this->task->setSelectedTables( $selectedTables );
-		$this->task->execute();
-	}
+        $this->task->setSelectedTables($selectedTables);
+        $this->task->execute();
+    }
 }
