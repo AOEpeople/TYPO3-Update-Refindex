@@ -29,7 +29,7 @@
  * @package update_refindex
  * @subpackage Tests
  */
-class Tx_UpdateRefindex_Typo3_RefIndexTest extends tx_phpunit_testcase {
+class Tx_UpdateRefindex_Typo3_RefIndexTest extends Tx_Phpunit_TestCase {
 	/**
 	 * @var Tx_UpdateRefindex_Typo3_RefIndex
 	 */

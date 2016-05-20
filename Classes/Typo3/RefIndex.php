@@ -111,7 +111,7 @@ class Tx_UpdateRefindex_Typo3_RefIndex {
 	 */
 	protected function updateTable($tableName) {
 		// Traverse all records in table, including deleted records:
-		$allRecs = $this->getTypo3Db()->exec_SELECTgetRows('uid',$tableName,'1=1');	//.t3lib_BEfunc::deleteClause($tableName)
+		$allRecs = $this->getTypo3Db()->exec_SELECTgetRows('uid',$tableName,'1=1');	//.TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause($tableName)
 		$uidList = array(0);
 		foreach ($allRecs as $recdat)	{
 			$this->createT3libRefindex()->updateRefIndexTable($tableName,$recdat['uid']);
