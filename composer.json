@@ -28,6 +28,11 @@
         "sebastian/phpcpd": "2.0.*",
         "phpmd/phpmd": "2.2.*"
     },
+    "autoload": {
+        "classmap": [
+            "Classes"
+        ]
+    },
     "replace": {
         "update_refindex": "*"
     },
