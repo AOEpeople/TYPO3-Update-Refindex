@@ -52,6 +52,8 @@ class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements \TYP
         $task,
         \TYPO3\CMS\Scheduler\Controller\SchedulerModuleController $parentObject
     ) {
+        /** @var Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask $task */
+
         // define value for fields
         if ($parentObject->CMD == 'add') {
             $taskInfo[self::FIELD_ALL_TABLES] = false;
@@ -85,6 +87,7 @@ class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements \TYP
      */
     public function saveAdditionalFields(array $submittedData, \TYPO3\CMS\Scheduler\Task\AbstractTask $task)
     {
+        /** @var Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask $task */
         $task->setUpdateAllTables((boolean)$submittedData[self::FIELD_ALL_TABLES]);
         $task->setSelectedTables((array)$submittedData[self::FIELD_SELECTED_TABLES]);
     }
@@ -158,7 +161,7 @@ class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements \TYP
      */
     private function getSelectBox(array $selected)
     {
-        $contentArray = array('<select id="task_' . self::FIELD_SELECTED_TABLES . '" name="tx_scheduler[' . self::FIELD_SELECTED_TABLES . '][]" size="20" multiple="multiple">');
+        $contentArray = array('<select id="task_' . self::FIELD_SELECTED_TABLES . '" name="tx_scheduler[' . self::FIELD_SELECTED_TABLES . '][]" size="20" multiple="multiple" class="form-control">');
 
         foreach ($this->getOptionsForSelectBox() as $value => $label) {
             $selectAttribute = in_array($value, $selected) ? ' selected="selected"' : '';
