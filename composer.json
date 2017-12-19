@@ -1,6 +1,6 @@
 {
     "name": "aoe/update-refindex",
-    "description": "extension contains scheduler-task to update refindex of TYPO3",
+    "description": "Extension contains scheduler-task to update refindex of TYPO3",
     "type": "typo3-cms-extension",
     "homepage": "https://forge.typo3.org/projects/extension-update_refindex",
     "license": "GPL-3.0",
@@ -16,15 +16,13 @@
             "homepage": "http://www.aoe.com"
         }
     ],
-    "config": {
-        "secure-http": false
-    },
     "require": {
-        "php": ">=5.2.0",
+        "php": ">=5.5.0",
         "typo3/cms-core": ">=6.2.0,<=7.6.99"
     },
     "require-dev": {
         "typo3/cms": "^7.6",
+        "nimut/testing-framework": "^2.0",
         "phpunit/phpunit": "4.8.*",
         "phpunit/phpcov": "2.0.*",
         "squizlabs/php_codesniffer": "2.3.*",
@@ -32,12 +30,38 @@
         "phpmd/phpmd": "2.2.*"
     },
     "autoload": {
-        "classmap": [
-            "Classes"
-        ]
+        "psr-4": {
+            "Aoe\\UpdateRefindex\\": "Classes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Aoe\\UpdateRefindex\\Tests\\": "Tests",
+            "TYPO3\\CMS\\Core\\Tests\\": ".Build/vendor/typo3/cms/typo3/sysext/core/Tests/"
+        }
     },
     "replace": {
-        "update_refindex": "*"
+        "update_refindex": "self.version"
+    },
+    "config": {
+        "secure-http": false,
+        "vendor-dir": ".Build/vendor",
+        "bin-dir": ".Build/bin"
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "mkdir -p .Build/Web/typo3conf/ext/",
+            "[ -L .Build/Web/typo3conf/ext/update_refindex ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/update_refindex"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.0-dev"
+        },
+        "typo3/cms": {
+            "cms-package-dir": "{$vendor-dir}/typo3/cms",
+            "web-dir": ".Build/Web"
+        }
     },
     "keywords": [
         "TYPO3",

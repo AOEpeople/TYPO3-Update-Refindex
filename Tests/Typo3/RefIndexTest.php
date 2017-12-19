@@ -1,9 +1,10 @@
 <?php
+namespace Aoe\UpdateRefindex\Tests\Typo3;
 
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2016 AOE media GmbH <dev@aoemedia.de>
+ *  (c) 2017 AOE GmbH <dev@aoe.com>
  *
  *  All rights reserved
  *
@@ -24,43 +25,48 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Aoe\UpdateRefindex\Typo3\RefIndex;
+use Nimut\TestingFramework\TestCase\UnitTestCase;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\ReferenceIndex;
+
 /**
  * Tests class Tx_UpdateRefindex_Typo3_RefIndex
  *
  * @package update_refindex
  * @subpackage Tests
  */
-class Tx_UpdateRefindex_Typo3_RefIndexTest extends PHPUnit_Framework_TestCase
+class RefIndexTest extends UnitTestCase
 {
     /**
-     * @var Tx_UpdateRefindex_Typo3_RefIndex
+     * @var RefIndex
      */
     private $refIndex;
     /**
-     * @var \TYPO3\CMS\Core\Database\ReferenceIndex
+     * @var ReferenceIndex
      */
-    private $t3libRefindex;
+    private $referenceIndex;
     /**
-     * @var \TYPO3\CMS\Core\Database\DatabaseConnection
+     * @var DatabaseConnection
      */
-    private $typo3Db;
+    private $databaseConnection;
 
     /**
      * Prepares the environment before running a test.
      */
     protected function setUp()
     {
-        $this->t3libRefindex = $this->getMock('\TYPO3\CMS\Core\Database\ReferenceIndex', array(), array(), '', false);
-        $this->typo3Db = $this->getMock('\TYPO3\CMS\Core\Database\DatabaseConnection', array(), array(), '', false);
-        $this->refIndex = $this->getMock('Tx_UpdateRefindex_Typo3_RefIndex', array('createT3libRefindex', 'getExistingTables', 'getTypo3Db'));
+        $this->referenceIndex = $this->getMock(ReferenceIndex::class, array(), array(), '', false);
+        $this->databaseConnection = $this->getMock(DatabaseConnection::class, array(), array(), '', false);
+        $this->refIndex = $this->getMock(RefIndex::class, array('getReferenceIndex', 'getExistingTables', 'getDatabaseConnection'));
         $this->refIndex
             ->expects($this->any())
-            ->method('createT3libRefindex')
-            ->will($this->returnValue($this->t3libRefindex));
+            ->method('getReferenceIndex')
+            ->willReturn($this->referenceIndex);
         $this->refIndex
             ->expects($this->any())
-            ->method('getTypo3Db')
-            ->will($this->returnValue($this->typo3Db));
+            ->method('getDatabaseConnection')
+            ->willReturn($this->databaseConnection);
     }
 
     /**
@@ -69,8 +75,8 @@ class Tx_UpdateRefindex_Typo3_RefIndexTest extends PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($this->refIndex);
-        unset($this->t3libRefindex);
-        unset($this->typo3Db);
+        unset($this->referenceIndex);
+        unset($this->databaseConnection);
     }
 
     /**
@@ -87,74 +93,74 @@ class Tx_UpdateRefindex_Typo3_RefIndexTest extends PHPUnit_Framework_TestCase
         /**
          * define behaviour of object refIndex
          */
-        $this->refIndex->expects($this->any())->method('getExistingTables')->will($this->returnValue($selectedTables));
+        $this->refIndex->expects($this->any())->method('getExistingTables')->willReturn($selectedTables);
 
         /**
-         * define behaviour of object typo3Db
+         * define behaviour of object DatabaseConnection
          */
         // 1.1. find all records of table1
-        $this->typo3Db
+        $this->databaseConnection
             ->expects($this->at(0))
             ->method('exec_SELECTgetRows')
             ->with('uid', $selectedTables[0], '1=1')
-            ->will($this->returnValue($recordsOfTable1));
+            ->willReturn($recordsOfTable1);
         // 1.2. Searching lost indexes of table1
-        $this->typo3Db
+        $this->databaseConnection
             ->expects($this->at(1))
             ->method('fullQuoteStr')
             ->with($selectedTables[0], 'sys_refindex')
-            ->will($this->returnValue($selectedTables[0]));
-        $this->typo3Db
+            ->willReturn($selectedTables[0]);
+        $this->databaseConnection
             ->expects($this->at(2))
             ->method('exec_DELETEquery')
             ->with('sys_refindex', 'tablename=' . $selectedTables[0] . ' AND recuid NOT IN (0,' . $recordsOfTable1[0]['uid'] . ',' . $recordsOfTable1[1]['uid'] . ')');
         // 2.1. find all records of table2
-        $this->typo3Db
+        $this->databaseConnection
             ->expects($this->at(3))
             ->method('exec_SELECTgetRows')
             ->with('uid', $selectedTables[1], '1=1')
-            ->will($this->returnValue($recordsOfTable2));
+            ->willReturn($recordsOfTable2);
         // 2.2. Searching lost indexes of table2
-        $this->typo3Db
+        $this->databaseConnection
             ->expects($this->at(4))
             ->method('fullQuoteStr')
             ->with($selectedTables[1], 'sys_refindex')
-            ->will($this->returnValue($selectedTables[1]));
-        $this->typo3Db
+            ->willReturn($selectedTables[1]);
+        $this->databaseConnection
             ->expects($this->at(5))
             ->method('exec_DELETEquery')
             ->with('sys_refindex', 'tablename=' . $selectedTables[1] . ' AND recuid NOT IN (0,' . $recordsOfTable2[0]['uid'] . ',' . $recordsOfTable2[1]['uid'] . ',' . $recordsOfTable2[2]['uid'] . ')');
         // 3. delete lost indexes for non existing tables
-        $this->typo3Db
+        $this->databaseConnection
             ->expects($this->at(6))
             ->method('fullQuoteArray')
             ->with($selectedTables, 'sys_refindex')
-            ->will($this->returnValue($selectedTables));
-        $this->typo3Db
+            ->willReturn($selectedTables);
+        $this->databaseConnection
             ->expects($this->at(7))
             ->method('exec_DELETEquery')
             ->with('sys_refindex', 'tablename NOT IN (' . implode(',', $selectedTables) . ')');
 
         /**
-         * define behaviour of object t3libRefindex
+         * define behaviour of object ReferenceIndex
          */
-        $this->t3libRefindex
+        $this->referenceIndex
             ->expects($this->at(0))
             ->method('updateRefIndexTable')
             ->with($selectedTables[0], $recordsOfTable1[0]['uid'], false);
-        $this->t3libRefindex
+        $this->referenceIndex
             ->expects($this->at(1))
             ->method('updateRefIndexTable')
             ->with($selectedTables[0], $recordsOfTable1[1]['uid'], false);
-        $this->t3libRefindex
+        $this->referenceIndex
             ->expects($this->at(2))
             ->method('updateRefIndexTable')
             ->with($selectedTables[1], $recordsOfTable2[0]['uid'], false);
-        $this->t3libRefindex
+        $this->referenceIndex
             ->expects($this->at(3))
             ->method('updateRefIndexTable')
             ->with($selectedTables[1], $recordsOfTable2[1]['uid'], false);
-        $this->t3libRefindex
+        $this->referenceIndex
             ->expects($this->at(4))
             ->method('updateRefIndexTable')
             ->with($selectedTables[1], $recordsOfTable2[2]['uid'], false);

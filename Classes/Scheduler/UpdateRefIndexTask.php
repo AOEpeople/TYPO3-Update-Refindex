@@ -1,9 +1,10 @@
 <?php
+namespace Aoe\UpdateRefindex\Scheduler;
 
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2016 AOE GmbH <dev@aoe.com>
+ *  (c) 2017 AOE GmbH <dev@aoe.com>
  *
  *  All rights reserved
  *
@@ -24,7 +25,9 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Aoe\UpdateRefindex\Typo3\RefIndex;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
 /**
  * scheduler-task to update refindex of TYPO3
@@ -32,7 +35,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package update_refindex
  * @subpackage Scheduler
  */
-class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask extends \TYPO3\CMS\Scheduler\Task\AbstractTask
+class UpdateRefIndexTask extends AbstractTask
 {
     /**
      * Boolean flag indicating if all existing tables should be processed
@@ -49,7 +52,7 @@ class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask extends \TYPO3\CMS\Schedule
     public $updateRefindexSelectedTables;
 
     /**
-     * @var Tx_UpdateRefindex_Typo3_RefIndex
+     * @var RefIndex
      */
     private $refIndex;
 
@@ -64,7 +67,7 @@ class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask extends \TYPO3\CMS\Schedule
         try {
             $selectedTables = $this->isUpdateAllTables() ? $this->getRefIndex()->getExistingTables() : $this->getSelectedTables();
             $this->getRefIndex()->setSelectedTables($selectedTables)->update();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $shellExitCode = false;
         }
 
@@ -104,12 +107,12 @@ class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask extends \TYPO3\CMS\Schedule
     }
 
     /**
-     * @return Tx_UpdateRefindex_Typo3_RefIndex
+     * @return RefIndex
      */
     protected function getRefIndex()
     {
         if ($this->refIndex === null) {
-            $this->refIndex = GeneralUtility::makeInstance('Tx_UpdateRefindex_Typo3_RefIndex');
+            $this->refIndex = GeneralUtility::makeInstance(RefIndex::class);
         }
 
         return $this->refIndex;

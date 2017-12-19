@@ -1,9 +1,10 @@
 <?php
+namespace Aoe\UpdateRefindex\Tests\Scheduler;
 
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2016 AOE media GmbH <dev@aoemedia.de>
+ *  (c) 2017 AOE GmbH <dev@aoe.com>
  *
  *  All rights reserved
  *
@@ -24,26 +25,31 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Aoe\UpdateRefindex\Scheduler\UpdateRefIndexTask;
+use Aoe\UpdateRefindex\Typo3\RefIndex;
+use Nimut\TestingFramework\TestCase\UnitTestCase;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
+
 /**
  * Tests class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask
  *
  * @package update_refindex
  * @subpackage Tests
  */
-class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTaskTest extends PHPUnit_Framework_TestCase
+class UpdateRefIndexTaskTest extends UnitTestCase
 {
     /**
-     * @var \TYPO3\CMS\Core\Database\DatabaseConnection
+     * @var DatabaseConnection
      */
     protected $databaseConnection;
 
     /**
-     * @var Tx_UpdateRefindex_Typo3_RefIndex
+     * @var RefIndex
      */
     protected $refIndex;
 
     /**
-     * @var Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask
+     * @var UpdateRefIndexTask
      */
     protected $task;
 
@@ -55,12 +61,12 @@ class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTaskTest extends PHPUnit_Framewo
         // Store TYPO3_DB in a local variable, as it will be substituted with a mock in this test
         $this->databaseConnection = $GLOBALS['TYPO3_DB'];
 
-        $GLOBALS['TYPO3_DB'] = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array(), array(), '', false);
+        $GLOBALS['TYPO3_DB'] = $this->getMock(DatabaseConnection::class, array(), array(), '', false);
 
-        $this->refIndex = $this->getMock('Tx_UpdateRefindex_Typo3_RefIndex', array(), array(), '', false);
+        $this->refIndex = $this->getMock(RefIndex::class, array(), array(), '', false);
 
-        $this->task = $this->getMock('Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask', array('getRefIndex'));
-        $this->task->expects($this->any())->method('getRefIndex')->will($this->returnValue($this->refIndex));
+        $this->task = $this->getMock(UpdateRefIndexTask::class, array('getRefIndex'));
+        $this->task->expects($this->any())->method('getRefIndex')->willReturn($this->refIndex);
     }
 
     /**
@@ -87,7 +93,7 @@ class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTaskTest extends PHPUnit_Framewo
             ->expects($this->once())
             ->method('setSelectedTables')
             ->with($selectedTables)
-            ->will($this->returnValue($this->refIndex));
+            ->willReturn($this->refIndex);
         $this->refIndex
             ->expects($this->once())->method('update');
 
@@ -105,12 +111,12 @@ class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTaskTest extends PHPUnit_Framewo
         $this->refIndex
             ->expects($this->any())
             ->method('getExistingTables')
-            ->will($this->returnValue($allTables));
+            ->willReturn($allTables);
         $this->refIndex
             ->expects($this->once())
             ->method('setSelectedTables')
             ->with($allTables)
-            ->will($this->returnValue($this->refIndex));
+            ->willReturn($this->refIndex);
         $this->refIndex
             ->expects($this->once())->method('update');
 

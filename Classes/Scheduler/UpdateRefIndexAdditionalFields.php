@@ -1,9 +1,10 @@
 <?php
+namespace Aoe\UpdateRefindex\Scheduler;
 
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2016 AOE GmbH <dev@aoe.com>
+ *  (c) 2017 AOE GmbH <dev@aoe.com>
  *
  *  All rights reserved
  *
@@ -24,13 +25,15 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Scheduler\AdditionalFieldProviderInterface;
+
 /**
  * class to define additional fields
  *
  * @package update_refindex
  * @subpackage Scheduler
  */
-class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements \TYPO3\CMS\Scheduler\AdditionalFieldProviderInterface
+class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
 {
     /**
      * Field name constants
@@ -52,7 +55,7 @@ class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements \TYP
         $task,
         \TYPO3\CMS\Scheduler\Controller\SchedulerModuleController $parentObject
     ) {
-        /** @var Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask $task */
+        /** @var UpdateRefIndexTask $task */
 
         // define value for fields
         if ($parentObject->CMD == 'add') {
@@ -87,7 +90,7 @@ class tx_UpdateRefindex_Scheduler_UpdateRefIndexAdditionalFields implements \TYP
      */
     public function saveAdditionalFields(array $submittedData, \TYPO3\CMS\Scheduler\Task\AbstractTask $task)
     {
-        /** @var Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask $task */
+        /** @var UpdateRefIndexTask $task */
         $task->setUpdateAllTables((boolean)$submittedData[self::FIELD_ALL_TABLES]);
         $task->setSelectedTables((array)$submittedData[self::FIELD_SELECTED_TABLES]);
     }
