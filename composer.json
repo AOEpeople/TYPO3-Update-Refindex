@@ -2,12 +2,12 @@
     "name": "aoe/update-refindex",
     "description": "Extension contains scheduler-task to update refindex of TYPO3",
     "type": "typo3-cms-extension",
-    "homepage": "https://forge.typo3.org/projects/extension-update_refindex",
+    "homepage": "https://github.com/AOEpeople/TYPO3-Update-Refindex",
     "license": "GPL-3.0",
     "support": {
         "email": "dev@aoe.com",
-        "issues": "https://forge.typo3.org/projects/extension-update_refindex/issues",
-        "source": "https://forge.typo3.org/projects/extension-update_refindex"
+        "issues": "https://github.com/AOEpeople/TYPO3-Update-Refindex/issues",
+        "source": "https://github.com/AOEpeople/TYPO3-Update-Refindex"
     },
     "authors": [
         {
