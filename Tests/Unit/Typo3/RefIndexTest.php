@@ -1,5 +1,5 @@
 <?php
-namespace Aoe\UpdateRefindex\Tests\Typo3;
+namespace Aoe\UpdateRefindex\Tests\Unit\Typo3;
 
 /***************************************************************
  *  Copyright notice
@@ -31,7 +31,7 @@ use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 
 /**
- * Tests class Tx_UpdateRefindex_Typo3_RefIndex
+ * Tests class RefIndex
  *
  * @package update_refindex
  * @subpackage Tests

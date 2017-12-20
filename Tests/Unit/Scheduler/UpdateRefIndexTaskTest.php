@@ -1,5 +1,5 @@
 <?php
-namespace Aoe\UpdateRefindex\Tests\Scheduler;
+namespace Aoe\UpdateRefindex\Tests\Unit\Scheduler;
 
 /***************************************************************
  *  Copyright notice
@@ -31,7 +31,7 @@ use Nimut\TestingFramework\TestCase\UnitTestCase;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 
 /**
- * Tests class Tx_UpdateRefindex_Scheduler_UpdateRefIndexTask
+ * Tests class UpdateRefIndexTask
  *
  * @package update_refindex
  * @subpackage Tests
