@@ -1,9 +1,10 @@
 <?php
+namespace Aoe\UpdateRefindex\Typo3;
 
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2016 AOE GmbH <dev@aoe.com>
+ *  (c) 2018 AOE GmbH <dev@aoe.com>
  *
  *  All rights reserved
  *
@@ -24,6 +25,8 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -32,7 +35,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package update_refindex
  * @subpackage Typo3
  */
-class Tx_UpdateRefindex_Typo3_RefIndex
+class RefIndex
 {
     /**
      * @var array
@@ -46,7 +49,7 @@ class Tx_UpdateRefindex_Typo3_RefIndex
 
     /**
      * @param array $selectedTables
-     * @return Tx_UpdateRefindex_Typo3_RefIndex
+     * @return RefIndex
      */
     public function setSelectedTables(array $selectedTables)
     {
@@ -95,11 +98,11 @@ class Tx_UpdateRefindex_Typo3_RefIndex
     }
 
     /**
-     * @return \TYPO3\CMS\Core\Database\ReferenceIndex
+     * @return ReferenceIndex
      */
-    protected function createT3libRefindex()
+    protected function getReferenceIndex()
     {
-        return GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Database\\ReferenceIndex');
+        return GeneralUtility::makeInstance(ReferenceIndex::class);
     }
 
     /**
@@ -109,19 +112,16 @@ class Tx_UpdateRefindex_Typo3_RefIndex
     protected function deleteLostIndexes()
     {
         $where = 'tablename NOT IN (' . implode(',',
-                $this->getTypo3Db()->fullQuoteArray($this->getExistingTables(), 'sys_refindex')) . ')';
-        $this->getTypo3Db()->exec_DELETEquery('sys_refindex', $where);
+                $this->getDatabaseConnection()->fullQuoteArray($this->getExistingTables(), 'sys_refindex')) . ')';
+        $this->getDatabaseConnection()->exec_DELETEquery('sys_refindex', $where);
     }
 
-
     /**
-     * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+     * @return DatabaseConnection
      */
-    protected function getTypo3Db()
+    protected function getDatabaseConnection()
     {
-        global $TYPO3_DB;
-
-        return $TYPO3_DB;
+        return $GLOBALS['TYPO3_DB'];
     }
 
     /**
@@ -133,17 +133,17 @@ class Tx_UpdateRefindex_Typo3_RefIndex
     protected function updateTable($tableName)
     {
         // Traverse all records in table, including deleted records:
-        $allRecs = $this->getTypo3Db()
+        $allRecs = $this->getDatabaseConnection()
             ->exec_SELECTgetRows('uid', $tableName, '1=1'); //.TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause($tableName)
         $uidList = array(0);
         foreach ($allRecs as $recdat) {
-            $this->createT3libRefindex()->updateRefIndexTable($tableName, $recdat['uid']);
+            $this->getReferenceIndex()->updateRefIndexTable($tableName, $recdat['uid']);
             $uidList[] = $recdat['uid'];
         }
 
         // Searching lost indexes for this table:
-        $where = 'tablename=' . $this->getTypo3Db()
+        $where = 'tablename=' . $this->getDatabaseConnection()
                 ->fullQuoteStr($tableName, 'sys_refindex') . ' AND recuid NOT IN (' . implode(',', $uidList) . ')';
-        $this->getTypo3Db()->exec_DELETEquery('sys_refindex', $where);
+        $this->getDatabaseConnection()->exec_DELETEquery('sys_refindex', $where);
     }
 }
