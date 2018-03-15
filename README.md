@@ -2,6 +2,11 @@
 
 This is a TYPO3-Extension to update the TYPO3-refindex for specified tables via a scheduler-task.
 
+## Build information
+[![Build Status](https://travis-ci.org/AOEpeople/TYPO3-Update-Refindex.svg?branch=master)](https://travis-ci.org/AOEpeople/TYPO3-Update-Refindex)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/AOEpeople/TYPO3-Update-Refindex/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/AOEpeople/TYPO3-Update-Refindex/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/AOEpeople/TYPO3-Update-Refindex/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/AOEpeople/TYPO3-Update-Refindex/?branch=master)
+
 ## Download / Installation
 
 You can download and install this extension or use composer.
