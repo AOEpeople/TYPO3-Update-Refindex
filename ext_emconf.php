@@ -8,34 +8,30 @@
 # writing. "version" and "dependencies" must not be touched!
 ########################################################################
 
-$EM_CONF[$_EXTKEY] = array(
-	'title' => 'update_refindex',
-	'description' => 'extension contains scheduler-task to update refindex of TYPO3',
-	'category' => '',
-	'author' => '',
-	'author_email' => 'dev@aoe.com',
-	'author_company' => 'AOE GmbH',
-	'shy' => '',
-	'dependencies' => '',
-	'conflicts' => '',
-	'priority' => '',
-	'module' => '',
-	'state' => 'alpha',
-	'internal' => '',
-	'uploadfolder' => 0,
-	'createDirs' => '',
-	'modify_tables' => '',
-	'clearCacheOnLoad' => 1,
-	'lockType' => '',
-	'version' => '1.0.0',
-	'constraints' => array(
-		'depends' => array(
-			'typo3' => '7.6.0-7.6.99',
-		),
-		'conflicts' => array(
-		),
-		'suggests' => array(
-		),
-	),
-	'_md5_values_when_last_written' => '',
-);
+$EM_CONF[$_EXTKEY] = [
+    'title' => 'update_refindex',
+    'description' => 'extension contains scheduler-task to update refindex of TYPO3',
+    'category' => '',
+    'author' => '',
+    'author_email' => 'dev@aoe.com',
+    'author_company' => 'AOE GmbH',
+    'shy' => '',
+    'priority' => '',
+    'module' => '',
+    'state' => 'stable',
+    'internal' => '',
+    'uploadfolder' => 0,
+    'createDirs' => '',
+    'modify_tables' => '',
+    'clearCacheOnLoad' => 1,
+    'lockType' => '',
+    'version' => '1.0.0',
+    'constraints' => [
+        'depends' => [
+            'typo3' => '7.6.0-8.7.99',
+        ],
+        'conflicts' => [],
+        'suggests' => [],
+    ],
+    '_md5_values_when_last_written' => '',
+];
