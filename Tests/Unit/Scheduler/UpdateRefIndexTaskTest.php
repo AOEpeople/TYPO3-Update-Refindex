@@ -61,11 +61,11 @@ class UpdateRefIndexTaskTest extends UnitTestCase
         // Store TYPO3_DB in a local variable, as it will be substituted with a mock in this test
         $this->databaseConnection = $GLOBALS['TYPO3_DB'];
 
-        $GLOBALS['TYPO3_DB'] = $this->getMock(DatabaseConnection::class, array(), array(), '', false);
+        $GLOBALS['TYPO3_DB'] = $this->getAccessibleMock(DatabaseConnection::class, array(), array(), '', false);
 
-        $this->refIndex = $this->getMock(RefIndex::class, array(), array(), '', false);
+        $this->refIndex = $this->getAccessibleMock(RefIndex::class, array(), array(), '', false);
 
-        $this->task = $this->getMock(UpdateRefIndexTask::class, array('getRefIndex'));
+        $this->task = $this->getAccessibleMock(UpdateRefIndexTask::class, array('getRefIndex'));
         $this->task->expects($this->any())->method('getRefIndex')->willReturn($this->refIndex);
     }
 

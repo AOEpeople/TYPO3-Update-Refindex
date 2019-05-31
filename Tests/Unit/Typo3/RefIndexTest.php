@@ -56,9 +56,9 @@ class RefIndexTest extends UnitTestCase
      */
     protected function setUp()
     {
-        $this->referenceIndex = $this->getMock(ReferenceIndex::class, array(), array(), '', false);
-        $this->databaseConnection = $this->getMock(DatabaseConnection::class, array(), array(), '', false);
-        $this->refIndex = $this->getMock(RefIndex::class, array('getReferenceIndex', 'getExistingTables', 'getDatabaseConnection'));
+        $this->referenceIndex = $this->getAccessibleMock(ReferenceIndex::class, array(), array(), '', false);
+        $this->databaseConnection = $this->getAccessibleMock(DatabaseConnection::class, array(), array(), '', false);
+        $this->refIndex = $this->getAccessibleMock(RefIndex::class, array('getReferenceIndex', 'getExistingTables', 'getDatabaseConnection'));
         $this->refIndex
             ->expects($this->any())
             ->method('getReferenceIndex')
