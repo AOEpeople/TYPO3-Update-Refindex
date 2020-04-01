@@ -42,10 +42,12 @@ class RefIndexTest extends UnitTestCase
      * @var RefIndex
      */
     private $refIndex;
+
     /**
      * @var ReferenceIndex
      */
     private $referenceIndex;
+
     /**
      * @var DatabaseConnection
      */
@@ -56,9 +58,21 @@ class RefIndexTest extends UnitTestCase
      */
     protected function setUp()
     {
-        $this->referenceIndex = $this->getAccessibleMock(ReferenceIndex::class, array(), array(), '', false);
-        $this->databaseConnection = $this->getAccessibleMock(DatabaseConnection::class, array(), array(), '', false);
-        $this->refIndex = $this->getAccessibleMock(RefIndex::class, array('getReferenceIndex', 'getExistingTables', 'getDatabaseConnection'));
+        $this->referenceIndex = $this->getMockBuilder(ReferenceIndex::class)
+            ->disableOriginalConstructor()
+            ->setMethods([])
+            ->getMock();
+
+        $this->databaseConnection = $this->getMockBuilder(DatabaseConnection::class)
+            ->disableOriginalConstructor()
+            ->setMethods([])
+            ->getMock();
+
+        $this->refIndex = $this->getMockBuilder(RefIndex::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getReferenceIndex', 'getExistingTables', 'getDatabaseConnection'])
+            ->getMock();
+
         $this->refIndex
             ->expects($this->any())
             ->method('getReferenceIndex')
@@ -86,9 +100,16 @@ class RefIndexTest extends UnitTestCase
      */
     public function update()
     {
-        $selectedTables = array('tablename1', 'tablename2');
-        $recordsOfTable1 = array(array('uid' => 10), array('uid' => 20));
-        $recordsOfTable2 = array(array('uid' => 70), array('uid' => 80), array('uid' => 90));
+        $selectedTables = ['tablename1', 'tablename2'];
+        $recordsOfTable1 = [
+            ['uid' => 10],
+            ['uid' => 20]
+        ];
+        $recordsOfTable2 = [
+            ['uid' => 70],
+            ['uid' => 80],
+            ['uid' => 90]
+        ];
 
         /**
          * define behaviour of object refIndex
