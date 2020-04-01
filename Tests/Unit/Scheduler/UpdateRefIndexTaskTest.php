@@ -28,7 +28,6 @@ namespace Aoe\UpdateRefindex\Tests\Unit\Scheduler;
 use Aoe\UpdateRefindex\Scheduler\UpdateRefIndexTask;
 use Aoe\UpdateRefindex\Typo3\RefIndex;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 
 /**
  * Tests class UpdateRefIndexTask
@@ -38,11 +37,6 @@ use TYPO3\CMS\Core\Database\DatabaseConnection;
  */
 class UpdateRefIndexTaskTest extends UnitTestCase
 {
-    /**
-     * @var DatabaseConnection
-     */
-    protected $databaseConnection;
-
     /**
      * @var RefIndex
      */
@@ -58,14 +52,16 @@ class UpdateRefIndexTaskTest extends UnitTestCase
      */
     protected function setUp()
     {
-        // Store TYPO3_DB in a local variable, as it will be substituted with a mock in this test
-        $this->databaseConnection = $GLOBALS['TYPO3_DB'];
+        $this->refIndex = $this->getMockBuilder(RefIndex::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getExistingTables', 'setSelectedTables', 'update'])
+            ->getMock();
 
-        $GLOBALS['TYPO3_DB'] = $this->getAccessibleMock(DatabaseConnection::class, array(), array(), '', false);
+        $this->task = $this->getMockBuilder(UpdateRefIndexTask::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRefIndex'])
+            ->getMock();
 
-        $this->refIndex = $this->getAccessibleMock(RefIndex::class, array(), array(), '', false);
-
-        $this->task = $this->getAccessibleMock(UpdateRefIndexTask::class, array('getRefIndex'));
         $this->task->expects($this->any())->method('getRefIndex')->willReturn($this->refIndex);
     }
 
@@ -74,10 +70,6 @@ class UpdateRefIndexTaskTest extends UnitTestCase
      */
     protected function tearDown()
     {
-        // Restore TYPO3_DB
-        $GLOBALS['TYPO3_DB'] = $this->databaseConnection;
-
-        unset($this->databaseConnection);
         unset($this->refIndex);
         unset($this->task);
     }
@@ -87,7 +79,7 @@ class UpdateRefIndexTaskTest extends UnitTestCase
      */
     public function executeWithSelectedTablesWillHandleSelectedTables()
     {
-        $selectedTables = array('table1', 'table2');
+        $selectedTables = ['table1', 'table2'];
 
         $this->refIndex
             ->expects($this->once())
@@ -106,7 +98,7 @@ class UpdateRefIndexTaskTest extends UnitTestCase
      */
     public function executeWithUpdateAllTablesWillHandleAllExistingTables()
     {
-        $allTables = array('table1', 'table2', 'table3', 'table4', 'table5');
+        $allTables = ['table1', 'table2', 'table3', 'table4', 'table5'];
 
         $this->refIndex
             ->expects($this->any())
