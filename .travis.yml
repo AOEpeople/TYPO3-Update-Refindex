@@ -4,6 +4,8 @@ php:
   - 7.0
   - 7.1
   - 7.2
+  - 7.3
+  - 7.4
 
 env:
   - TYPO3_VERSION=^7.6 COVERAGE=0
@@ -17,19 +19,21 @@ matrix:
     - env: TYPO3_VERSION=dev-master COVERAGE=0
       php: 7.1
   include:
-    - env: TYPO3_VERSION=^7.6 COVERAGE=1
-      php: 7.0
+    - env: TYPO3_VERSION=^8.7 COVERAGE=1
+      php: 7.2
   allow_failures:
     - env: TYPO3_VERSION=^8.7 COVERAGE=0
     - env: TYPO3_VERSION=dev-master COVERAGE=0
-    - php: 7.2
+    - php: 7.3
+    - php: 7.4
 
 notifications:
   email:
     on_success: never
     on_failure: never
 
-sudo: false
+os:
+  - linux
 
 addons:
   apt:
