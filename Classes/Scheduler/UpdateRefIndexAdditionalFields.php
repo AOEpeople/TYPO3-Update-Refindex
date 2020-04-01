@@ -60,26 +60,26 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
         // define value for fields
         if ($parentObject->CMD == 'add') {
             $taskInfo[self::FIELD_ALL_TABLES] = false;
-            $taskInfo[self::FIELD_SELECTED_TABLES] = array();
+            $taskInfo[self::FIELD_SELECTED_TABLES] = [];
         } elseif ($parentObject->CMD == 'edit') {
             $taskInfo[self::FIELD_ALL_TABLES] = $task->isUpdateAllTables();
             $taskInfo[self::FIELD_SELECTED_TABLES] = $task->getSelectedTables();
         } else {
             $taskInfo[self::FIELD_ALL_TABLES] = false;
-            $taskInfo[self::FIELD_SELECTED_TABLES] = array();
+            $taskInfo[self::FIELD_SELECTED_TABLES] = [];
         }
 
         // Get configuration (markup & labels) for additional fields
-        $additionalFields = array(
-            self::FIELD_ALL_TABLES => array(
+        $additionalFields = [
+            self::FIELD_ALL_TABLES => [
                 'code' => $this->getCheckbox($taskInfo[self::FIELD_ALL_TABLES]),
                 'label' => $GLOBALS['LANG']->sL(self::LL_REFERENCE . ':scheduler_task.updateRefindex.fieldUpdateAllTables.label')
-            ),
-            self::FIELD_SELECTED_TABLES => array(
+            ],
+            self::FIELD_SELECTED_TABLES => [
                 'code' => $this->getSelectBox($taskInfo[self::FIELD_SELECTED_TABLES]),
                 'label' => $GLOBALS['LANG']->sL(self::LL_REFERENCE . ':scheduler_task.updateRefindex.fieldSelectedTables.label')
-            ),
-        );
+            ],
+        ];
 
         return $additionalFields;
     }
@@ -148,7 +148,7 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
         $existingTables = array_keys($GLOBALS['TCA']);
         sort($existingTables);
 
-        $optionsSelectedTables = array();
+        $optionsSelectedTables = [];
         foreach ($existingTables as $existingTable) {
             $optionsSelectedTables[$existingTable] = $existingTable;
         }
@@ -164,7 +164,7 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
      */
     private function getSelectBox(array $selected)
     {
-        $contentArray = array('<select id="task_' . self::FIELD_SELECTED_TABLES . '" name="tx_scheduler[' . self::FIELD_SELECTED_TABLES . '][]" size="20" multiple="multiple" class="form-control">');
+        $contentArray = ['<select id="task_' . self::FIELD_SELECTED_TABLES . '" name="tx_scheduler[' . self::FIELD_SELECTED_TABLES . '][]" size="20" multiple="multiple" class="form-control">'];
 
         foreach ($this->getOptionsForSelectBox() as $value => $label) {
             $selectAttribute = in_array($value, $selected) ? ' selected="selected"' : '';

@@ -45,7 +45,7 @@ class RefIndex
     /**
      * @var array
      */
-    private $selectedTables = array();
+    private $selectedTables = [];
 
     /**
      * @param array $selectedTables
@@ -135,7 +135,7 @@ class RefIndex
         // Traverse all records in table, including deleted records:
         $allRecs = $this->getDatabaseConnection()
             ->exec_SELECTgetRows('uid', $tableName, '1=1'); //.TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause($tableName)
-        $uidList = array(0);
+        $uidList = [0];
         foreach ($allRecs as $recdat) {
             $this->getReferenceIndex()->updateRefIndexTable($tableName, $recdat['uid']);
             $uidList[] = $recdat['uid'];
