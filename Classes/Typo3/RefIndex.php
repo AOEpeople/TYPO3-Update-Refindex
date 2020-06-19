@@ -4,7 +4,7 @@ namespace Aoe\UpdateRefindex\Typo3;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2018 AOE GmbH <dev@aoe.com>
+ *  (c) 2020 AOE GmbH <dev@aoe.com>
  *
  *  All rights reserved
  *
@@ -25,7 +25,10 @@ namespace Aoe\UpdateRefindex\Typo3;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use PDO;
+use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -111,17 +114,18 @@ class RefIndex
      */
     protected function deleteLostIndexes()
     {
-        $where = 'tablename NOT IN (' . implode(',',
-                $this->getDatabaseConnection()->fullQuoteArray($this->getExistingTables(), 'sys_refindex')) . ')';
-        $this->getDatabaseConnection()->exec_DELETEquery('sys_refindex', $where);
-    }
-
-    /**
-     * @return DatabaseConnection
-     */
-    protected function getDatabaseConnection()
-    {
-        return $GLOBALS['TYPO3_DB'];
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_refindex');
+        $queryBuilder->getRestrictions()->removeAll();
+        $queryBuilder
+            ->delete('sys_refindex')
+            ->where(
+                $queryBuilder->expr()->notIn(
+                    'tablename',
+                    $queryBuilder->createNamedParameter($this->getExistingTables(), Connection::PARAM_STR_ARRAY)
+                )
+            )
+            ->execute();
     }
 
     /**
@@ -132,18 +136,41 @@ class RefIndex
      */
     protected function updateTable($tableName)
     {
+        /** @var ConnectionPool $connectionPool */
+        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+
         // Traverse all records in table, including deleted records:
-        $allRecs = $this->getDatabaseConnection()
-            ->exec_SELECTgetRows('uid', $tableName, '1=1'); //.TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause($tableName)
-        $uidList = [0];
+        $queryBuilder = $connectionPool->getQueryBuilderForTable($tableName);
+        $queryBuilder->getRestrictions()->removeAll();
+        $allRecs = $queryBuilder
+            ->select('uid')
+            ->from($tableName)
+            ->execute()
+            ->fetchAll(PDO::FETCH_ASSOC);
+
+        $uidList = array(0);
         foreach ($allRecs as $recdat) {
             $this->getReferenceIndex()->updateRefIndexTable($tableName, $recdat['uid']);
-            $uidList[] = $recdat['uid'];
+            $uidList[] = (int) $recdat['uid'];
         }
 
         // Searching lost indexes for this table:
-        $where = 'tablename=' . $this->getDatabaseConnection()
-                ->fullQuoteStr($tableName, 'sys_refindex') . ' AND recuid NOT IN (' . implode(',', $uidList) . ')';
-        $this->getDatabaseConnection()->exec_DELETEquery('sys_refindex', $where);
+        $queryBuilder = $connectionPool->getQueryBuilderForTable('sys_refindex');
+        $queryBuilder->getRestrictions()->removeAll();
+        $queryBuilder
+            ->delete('sys_refindex')
+            ->where(
+                $queryBuilder->expr()->eq(
+                    'tablename',
+                    $queryBuilder->createNamedParameter($tableName, PDO::PARAM_STR)
+                )
+            )
+            ->andWhere(
+                $queryBuilder->expr()->notIn(
+                    'recuid',
+                    $queryBuilder->createNamedParameter($uidList, Connection::PARAM_INT_ARRAY)
+                )
+            )
+            ->execute();
     }
 }
