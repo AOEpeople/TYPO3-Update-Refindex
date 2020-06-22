@@ -41,6 +41,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class RefIndex
 {
     /**
+     * @var ConnectionPool
+     */
+    private $connectionPool;
+
+    /**
      * @var array
      */
     private $existingTables;
@@ -114,9 +119,7 @@ class RefIndex
      */
     protected function deleteLostIndexes()
     {
-        /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_refindex');
-        $queryBuilder->getRestrictions()->removeAll();
+        $queryBuilder = $this->getQueryBuilderForTable('sys_refindex');
         $queryBuilder
             ->delete('sys_refindex')
             ->where(
@@ -136,27 +139,22 @@ class RefIndex
      */
     protected function updateTable($tableName)
     {
-        /** @var ConnectionPool $connectionPool */
-        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
-
         // Traverse all records in table, including deleted records:
-        $queryBuilder = $connectionPool->getQueryBuilderForTable($tableName);
-        $queryBuilder->getRestrictions()->removeAll();
+        $queryBuilder = $this->getQueryBuilderForTable($tableName);
         $allRecs = $queryBuilder
             ->select('uid')
             ->from($tableName)
             ->execute()
             ->fetchAll(PDO::FETCH_ASSOC);
 
-        $uidList = array(0);
+        $uidList = [0];
         foreach ($allRecs as $recdat) {
             $this->getReferenceIndex()->updateRefIndexTable($tableName, $recdat['uid']);
             $uidList[] = (int) $recdat['uid'];
         }
 
         // Searching lost indexes for this table:
-        $queryBuilder = $connectionPool->getQueryBuilderForTable('sys_refindex');
-        $queryBuilder->getRestrictions()->removeAll();
+        $queryBuilder = $this->getQueryBuilderForTable('sys_refindex');
         $queryBuilder
             ->delete('sys_refindex')
             ->where(
@@ -172,5 +170,34 @@ class RefIndex
                 )
             )
             ->execute();
+    }
+
+    /**
+     * @param string $table
+     * @param bool   $useEnableFields
+     * @return QueryBuilder
+     */
+    private function getQueryBuilderForTable(string $table, bool $useEnableFields = false): QueryBuilder
+    {
+        $connectionPool = $this->getConnectionPool();
+        $queryBuilder = $connectionPool->getQueryBuilderForTable($table);
+
+        if (false === $useEnableFields) {
+            $queryBuilder->getRestrictions()->removeAll();
+        }
+
+        return $queryBuilder;
+    }
+
+    /**
+     * @return ConnectionPool
+     */
+    private function getConnectionPool(): ConnectionPool
+    {
+        if (null === $this->connectionPool) {
+            $this->connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        }
+
+        return $this->connectionPool;
     }
 }
