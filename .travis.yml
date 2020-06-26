@@ -31,6 +31,9 @@ notifications:
 os:
   - linux
 
+services:
+  - mysql
+
 addons:
   apt:
     packages:
