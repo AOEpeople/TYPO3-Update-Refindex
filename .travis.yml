@@ -8,7 +8,6 @@ php:
   - 7.4
 
 env:
-  - TYPO3_VERSION=^7.6 COVERAGE=0
   - TYPO3_VERSION=^8.7 COVERAGE=0
   - TYPO3_VERSION=dev-master COVERAGE=0
 
@@ -32,6 +31,9 @@ notifications:
 os:
   - linux
 
+services:
+  - mysql
+
 addons:
   apt:
     packages:
@@ -52,7 +54,7 @@ before_script:
   - git checkout composer.json
   - export "TYPO3_PATH_WEB"=$PWD/.Build/Web;
   # Locating UnitTests.xml
-  - export "UNIT_XML"='.Build/vendor/nimut/testing-framework/res/Configuration/UnitTests.xml'
+  - export "UNIT_XML"='Tests/UnitTests.xml'
   # Symlink TYPO3-Core
   - ln -nfs .Build/vendor/typo3/cms/typo3 typo3
 
