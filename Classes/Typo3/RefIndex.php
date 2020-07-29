@@ -25,6 +25,7 @@ namespace Aoe\UpdateRefindex\Typo3;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Exception;
 use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -54,6 +55,11 @@ class RefIndex
      * @var array
      */
     private $selectedTables = [];
+
+    /**
+     * @var ReferenceIndex
+     */
+    private $referenceIndex;
 
     /**
      * @param array $selectedTables
@@ -106,14 +112,6 @@ class RefIndex
     }
 
     /**
-     * @return ReferenceIndex
-     */
-    protected function getReferenceIndex()
-    {
-        return GeneralUtility::makeInstance(ReferenceIndex::class);
-    }
-
-    /**
      * Searching lost indexes for non-existing tables
      * this code is inspired by the code of method 'updateIndex' in class '\TYPO3\CMS\Core\Database\ReferenceIndex'
      */
@@ -127,8 +125,8 @@ class RefIndex
                     'tablename',
                     $queryBuilder->createNamedParameter($this->getExistingTables(), Connection::PARAM_STR_ARRAY)
                 )
-            )
-            ->execute();
+            );
+        $queryBuilder->execute();
     }
 
     /**
@@ -139,37 +137,75 @@ class RefIndex
      */
     protected function updateTable($tableName)
     {
-        // Traverse all records in table, including deleted records:
-        $queryBuilder = $this->getQueryBuilderForTable($tableName);
-        $allRecs = $queryBuilder
+        // Select all records from table, including deleted records
+        $subQueryBuilder = $this->getQueryBuilderForTable($tableName);
+        $subQueryBuilder
             ->select('uid')
-            ->from($tableName)
+            ->from($tableName);
+
+        // Update refindex table for all records in table
+        $result = $subQueryBuilder->execute();
+        while ($tableRecord = $result->fetch(PDO::FETCH_ASSOC)) {
+            try {
+                $this->getReferenceIndex()->updateRefIndexTable($tableName, $tableRecord['uid'], true);
+            } catch (Exception $e) {
+                GeneralUtility::sysLog($e->getMessage(), 'update_refindex', GeneralUtility::SYSLOG_SEVERITY_ERROR);
+            }
+        }
+
+        // Select all records from sys_refindex which are not in $tableName, including deleted records
+        $queryBuilder = $this->getQueryBuilderForTable('sys_refindex');
+        $queryBuilder
+            ->select('recuid')
+            ->from('sys_refindex')
+            ->where(
+                $queryBuilder->expr()->eq('tablename', $queryBuilder->createNamedParameter($tableName, PDO::PARAM_STR))
+            )
+            ->andWhere($queryBuilder->expr()->notIn('recuid', $subQueryBuilder->getSQL()))
+            ->groupBy('recuid');
+
+        $allRecs = $queryBuilder
             ->execute()
             ->fetchAll(PDO::FETCH_ASSOC);
 
-        $uidList = [0];
+        $uidList = [];
         foreach ($allRecs as $recdat) {
-            $this->getReferenceIndex()->updateRefIndexTable($tableName, $recdat['uid']);
             $uidList[] = (int) $recdat['uid'];
         }
 
-        // Searching lost indexes for this table:
-        $queryBuilder = $this->getQueryBuilderForTable('sys_refindex');
-        $queryBuilder
-            ->delete('sys_refindex')
-            ->where(
-                $queryBuilder->expr()->eq(
-                    'tablename',
-                    $queryBuilder->createNamedParameter($tableName, PDO::PARAM_STR)
-                )
-            )
-            ->andWhere(
-                $queryBuilder->expr()->notIn(
-                    'recuid',
-                    $queryBuilder->createNamedParameter($uidList, Connection::PARAM_INT_ARRAY)
-                )
-            )
-            ->execute();
+        if (!empty($uidList)) {
+            // Searching lost indexes for this table:
+            $queryBuilder = $this->getQueryBuilderForTable('sys_refindex');
+            foreach (array_chunk($uidList, 100) as $uidChunk) {
+                $queryBuilder
+                    ->delete('sys_refindex')
+                    ->where(
+                        $queryBuilder->expr()->eq(
+                            'tablename',
+                            $queryBuilder->createNamedParameter($tableName, PDO::PARAM_STR)
+                        )
+                    )
+                    ->andWhere(
+                        $queryBuilder->expr()->in(
+                            'recuid',
+                            $queryBuilder->createNamedParameter($uidChunk, Connection::PARAM_INT_ARRAY)
+                        )
+                    );
+                $queryBuilder->execute();
+            }
+        }
+    }
+
+    /**
+     * @return ReferenceIndex
+     */
+    protected function getReferenceIndex(): ReferenceIndex
+    {
+        if (null === $this->referenceIndex) {
+            $this->referenceIndex = GeneralUtility::makeInstance(ReferenceIndex::class);
+        }
+
+        return $this->referenceIndex;
     }
 
     /**
