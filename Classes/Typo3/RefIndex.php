@@ -41,6 +41,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RefIndex
 {
+    public const ARRAY_CHUNK_SIZE = 100;
+
     /**
      * @var ConnectionPool
      */
@@ -170,13 +172,13 @@ class RefIndex
 
         $uidList = [];
         foreach ($allRecs as $recdat) {
-            $uidList[] = (int) $recdat['uid'];
+            $uidList[] = (int)$recdat['uid'];
         }
 
         if (!empty($uidList)) {
             // Searching lost indexes for this table:
             $queryBuilder = $this->getQueryBuilderForTable('sys_refindex');
-            foreach (array_chunk($uidList, 100) as $uidChunk) {
+            foreach (array_chunk($uidList, self::ARRAY_CHUNK_SIZE) as $uidChunk) {
                 $queryBuilder
                     ->delete('sys_refindex')
                     ->where(
