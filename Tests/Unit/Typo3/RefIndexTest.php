@@ -170,18 +170,18 @@ class RefIndexTest extends UnitTestCase
     {
         $table = 'test_table';
         $records = [['uid' => 1], ['uid' => 2]];
-
         $referenceIndexMock = $this->getMockBuilder(ReferenceIndex::class)
             ->disableOriginalConstructor()
             ->setMethods(['updateRefIndexTable'])
             ->getMock();
-        $referenceIndexMock->expects($this->at(0))->method('updateRefIndexTable')->with($this->equalTo($table), $this->equalTo(1));
-        $referenceIndexMock->expects($this->at(1))->method('updateRefIndexTable')->with($this->equalTo($table), $this->equalTo(2));
+        $referenceIndexMock->expects(self::at(0))->method('updateRefIndexTable')->with(self::equalTo($table), self::equalTo(1));
+        $referenceIndexMock->expects(self::at(1))->method('updateRefIndexTable')->with(self::equalTo($table), self::equalTo(2));
 
         $refIndex = $this->getMockBuilder(RefIndex::class)
-            ->setMethods(['getReferenceIndex'])
+            ->setMethods(['getReferenceIndex', 'getDeletableRecUidsListFromTable'])
             ->getMock();
-        $refIndex->expects($this->any())->method('getReferenceIndex')->willReturn($referenceIndexMock);
+        $refIndex->method('getDeletableRecUidsListFromTable')->willReturn([]);
+        $refIndex->method('getReferenceIndex')->willReturn($referenceIndexMock);
 
         $testTableQueryBuilderProphet = $this->getQueryBuilderProphet($table);
         $selectQueryBuilderMock = $testTableQueryBuilderProphet->reveal();
@@ -198,7 +198,7 @@ class RefIndexTest extends UnitTestCase
 
         $refTableQueryBuilderProphet->delete('sys_refindex')->shouldBeCalledOnce()->willReturn($refTableQueryBuilderMock);
         $refTableQueryBuilderProphet->where('`tablename` = :dcValue1')->shouldBeCalledOnce()->willReturn($refTableQueryBuilderMock);
-        $refTableQueryBuilderProphet->andWhere('`recuid` NOT IN (:dcValue2)')->shouldBeCalledOnce()->willReturn($refTableQueryBuilderMock);
+        $refTableQueryBuilderProphet->andWhere('`recuid` IN (:dcValue2)')->shouldBeCalledOnce()->willReturn($refTableQueryBuilderMock);
         $refTableQueryBuilderProphet->execute()->shouldBeCalledOnce();
 
         $refTableQueryBuilderProphet->createNamedParameter($table, PDO::PARAM_STR)->willReturn(':dcValue1');

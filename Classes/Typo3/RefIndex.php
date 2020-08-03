@@ -155,6 +155,44 @@ class RefIndex
             }
         }
 
+        $recUidList = $this->getDeletableRecUidListFromTable($tableName);
+
+        if (!empty($recUidList)) {
+            // Searching lost indexes for this table:
+            $queryBuilder = $this->getQueryBuilderForTable('sys_refindex');
+            foreach (array_chunk($recUidList, self::ARRAY_CHUNK_SIZE) as $recUidChunk) {
+                $queryBuilder
+                    ->delete('sys_refindex')
+                    ->where(
+                        $queryBuilder->expr()->eq(
+                            'tablename',
+                            $queryBuilder->createNamedParameter($tableName, PDO::PARAM_STR)
+                        )
+                    )
+                    ->andWhere(
+                        $queryBuilder->expr()->in(
+                            'recuid',
+                            $queryBuilder->createNamedParameter($recUidChunk, Connection::PARAM_INT_ARRAY)
+                        )
+                    );
+                $queryBuilder->execute();
+            }
+        }
+    }
+
+    /**
+     * @param string $tableName
+     *
+     * @return int[]
+     */
+    protected function getDeletableRecUidListFromTable($tableName): array
+    {
+        // Select all records from table, including deleted records
+        $subQueryBuilder = $this->getQueryBuilderForTable($tableName);
+        $subQueryBuilder
+            ->select('uid')
+            ->from($tableName);
+
         // Select all records from sys_refindex which are not in $tableName, including deleted records
         $queryBuilder = $this->getQueryBuilderForTable('sys_refindex');
         $queryBuilder
@@ -170,32 +208,12 @@ class RefIndex
             ->execute()
             ->fetchAll(PDO::FETCH_ASSOC);
 
-        $uidList = [];
+        $recUidList = [0];
         foreach ($allRecs as $recdat) {
-            $uidList[] = (int)$recdat['recuid'];
+            $recUidList[] = (int)$recdat['recuid'];
         }
 
-        if (!empty($uidList)) {
-            // Searching lost indexes for this table:
-            $queryBuilder = $this->getQueryBuilderForTable('sys_refindex');
-            foreach (array_chunk($uidList, self::ARRAY_CHUNK_SIZE) as $uidChunk) {
-                $queryBuilder
-                    ->delete('sys_refindex')
-                    ->where(
-                        $queryBuilder->expr()->eq(
-                            'tablename',
-                            $queryBuilder->createNamedParameter($tableName, PDO::PARAM_STR)
-                        )
-                    )
-                    ->andWhere(
-                        $queryBuilder->expr()->in(
-                            'recuid',
-                            $queryBuilder->createNamedParameter($uidChunk, Connection::PARAM_INT_ARRAY)
-                        )
-                    );
-                $queryBuilder->execute();
-            }
-        }
+        return $recUidList;
     }
 
     /**
