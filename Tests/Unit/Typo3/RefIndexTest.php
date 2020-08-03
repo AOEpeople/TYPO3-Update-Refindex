@@ -180,8 +180,8 @@ class RefIndexTest extends UnitTestCase
         $refIndex = $this->getMockBuilder(RefIndex::class)
             ->setMethods(['getReferenceIndex', 'getDeletableRecUidListFromTable'])
             ->getMock();
-        $refIndex->method('getDeletableRecUidListFromTable')->willReturn([]);
         $refIndex->method('getReferenceIndex')->willReturn($referenceIndexMock);
+        $refIndex->method('getDeletableRecUidListFromTable')->willReturn([0]);
 
         $testTableQueryBuilderProphet = $this->getQueryBuilderProphet($table);
         $selectQueryBuilderMock = $testTableQueryBuilderProphet->reveal();
@@ -202,7 +202,7 @@ class RefIndexTest extends UnitTestCase
         $refTableQueryBuilderProphet->execute()->shouldBeCalledOnce();
 
         $refTableQueryBuilderProphet->createNamedParameter($table, PDO::PARAM_STR)->willReturn(':dcValue1');
-        $refTableQueryBuilderProphet->createNamedParameter([0,1,2], Connection::PARAM_INT_ARRAY)->willReturn(':dcValue2');
+        $refTableQueryBuilderProphet->createNamedParameter([0], Connection::PARAM_INT_ARRAY)->willReturn(':dcValue2');
 
         $this->callInaccessibleMethod($refIndex, 'updateTable', $table);
     }

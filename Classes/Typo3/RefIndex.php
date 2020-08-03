@@ -140,19 +140,16 @@ class RefIndex
     protected function updateTable($tableName)
     {
         // Select all records from table, including deleted records
-        $subQueryBuilder = $this->getQueryBuilderForTable($tableName);
-        $subQueryBuilder
+        $queryBuilder = $this->getQueryBuilderForTable($tableName);
+        $allRecs = $queryBuilder
             ->select('uid')
-            ->from($tableName);
+            ->from($tableName)
+            ->execute()
+            ->fetchAll(PDO::FETCH_ASSOC);
 
         // Update refindex table for all records in table
-        $result = $subQueryBuilder->execute();
-        while ($tableRecord = $result->fetch(PDO::FETCH_ASSOC)) {
-            try {
-                $this->getReferenceIndex()->updateRefIndexTable($tableName, $tableRecord['uid']);
-            } catch (Exception $e) {
-                GeneralUtility::sysLog($e->getMessage(), 'update_refindex', GeneralUtility::SYSLOG_SEVERITY_ERROR);
-            }
+        foreach ($allRecs as $recdat) {
+            $this->getReferenceIndex()->updateRefIndexTable($tableName, $recdat['uid']);
         }
 
         $recUidList = $this->getDeletableRecUidListFromTable($tableName);
