@@ -149,7 +149,7 @@ class RefIndex
         $result = $subQueryBuilder->execute();
         while ($tableRecord = $result->fetch(PDO::FETCH_ASSOC)) {
             try {
-                $this->getReferenceIndex()->updateRefIndexTable($tableName, $tableRecord['uid'], true);
+                $this->getReferenceIndex()->updateRefIndexTable($tableName, $tableRecord['uid']);
             } catch (Exception $e) {
                 GeneralUtility::sysLog($e->getMessage(), 'update_refindex', GeneralUtility::SYSLOG_SEVERITY_ERROR);
             }
@@ -172,7 +172,7 @@ class RefIndex
 
         $uidList = [];
         foreach ($allRecs as $recdat) {
-            $uidList[] = (int)$recdat['uid'];
+            $uidList[] = (int)$recdat['recuid'];
         }
 
         if (!empty($uidList)) {
