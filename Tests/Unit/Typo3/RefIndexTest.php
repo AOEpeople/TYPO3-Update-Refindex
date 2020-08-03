@@ -208,6 +208,41 @@ class RefIndexTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function getDeletableRecUidListFromTable()
+    {
+        $table = 'test_table';
+
+        $refIndex = $this->getMockBuilder(RefIndex::class)->getMock();
+
+        $testTableQueryBuilderProphet = $this->getQueryBuilderProphet($table);
+        $testTableQueryBuilderProphet->getSQL()->shouldBeCalledOnce()->willReturn('SELECT `uid` FROM `test_table`');
+
+        $selectQueryBuilderMock = $testTableQueryBuilderProphet->reveal();
+
+        $testTableQueryBuilderProphet->select('uid')->shouldBeCalledOnce()->willReturn($selectQueryBuilderMock);
+        $testTableQueryBuilderProphet->from($table)->shouldBeCalledOnce()->willReturn($selectQueryBuilderMock);
+
+        $statementProphet = $this->prophesize(Statement::class);
+        $statementProphet->fetchAll(PDO::FETCH_ASSOC)->shouldBeCalledOnce()->willReturn([]);
+
+        $refTableQueryBuilderProphet = $this->getQueryBuilderProphet('sys_refindex');
+        $refTableQueryBuilderMock = $refTableQueryBuilderProphet->reveal();
+
+        $refTableQueryBuilderProphet->select('recuid')->shouldBeCalledOnce()->willReturn($refTableQueryBuilderMock);
+        $refTableQueryBuilderProphet->from('sys_refindex')->shouldBeCalledOnce()->willReturn($refTableQueryBuilderMock);
+        $refTableQueryBuilderProphet->where('`tablename` = :dcValue1')->shouldBeCalledOnce()->willReturn($refTableQueryBuilderMock);
+        $refTableQueryBuilderProphet->andWhere('`recuid` NOT IN (SELECT `uid` FROM `test_table`)')->shouldBeCalledOnce()->willReturn($refTableQueryBuilderMock);
+        $refTableQueryBuilderProphet->groupBy('recuid')->shouldBeCalledOnce()->willReturn($refTableQueryBuilderMock);
+        $refTableQueryBuilderProphet->execute()->shouldBeCalledOnce()->willReturn($statementProphet->reveal());
+
+        $refTableQueryBuilderProphet->createNamedParameter($table, PDO::PARAM_STR)->willReturn(':dcValue1');
+
+        self::assertSame([0], $this->callInaccessibleMethod($refIndex, 'getDeletableRecUidListFromTable', $table));
+    }
+
+    /**
      * @param string $table
      * @return ObjectProphecy|QueryBuilder
      */
