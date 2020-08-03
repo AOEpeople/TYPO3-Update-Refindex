@@ -178,9 +178,9 @@ class RefIndexTest extends UnitTestCase
         $referenceIndexMock->expects(self::at(1))->method('updateRefIndexTable')->with(self::equalTo($table), self::equalTo(2));
 
         $refIndex = $this->getMockBuilder(RefIndex::class)
-            ->setMethods(['getReferenceIndex', 'getDeletableRecUidsListFromTable'])
+            ->setMethods(['getReferenceIndex', 'getDeletableRecUidListFromTable'])
             ->getMock();
-        $refIndex->method('getDeletableRecUidsListFromTable')->willReturn([]);
+        $refIndex->method('getDeletableRecUidListFromTable')->willReturn([]);
         $refIndex->method('getReferenceIndex')->willReturn($referenceIndexMock);
 
         $testTableQueryBuilderProphet = $this->getQueryBuilderProphet($table);
