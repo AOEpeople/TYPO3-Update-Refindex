@@ -41,7 +41,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RefIndex
 {
-    public const ARRAY_CHUNK_SIZE = 100;
+    const ARRAY_CHUNK_SIZE = 100;
 
     /**
      * @var ConnectionPool
