@@ -3,7 +3,7 @@
 This is a TYPO3-Extension to update the TYPO3-refindex for specified tables via a scheduler-task.
 
 ## Build information
-[![Build Status](https://travis-ci.org/AOEpeople/TYPO3-Update-Refindex.svg?branch=master)](https://travis-ci.org/AOEpeople/TYPO3-Update-Refindex)
+[![Build Status](https://github.com/AOEpeople/TYPO3-Update-Refindex/workflows/CI/badge.svg?branch=master)](https://github.com/AOEpeople/TYPO3-Update-Refindex)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/AOEpeople/TYPO3-Update-Refindex/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/AOEpeople/TYPO3-Update-Refindex/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/AOEpeople/TYPO3-Update-Refindex/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/AOEpeople/TYPO3-Update-Refindex/?branch=master)
 
@@ -13,7 +13,7 @@ You can download and install this extension or use composer.
 
 ## Copyright / License
 
-Copyright: (c) 2016 - 2018, AOE GmbH
+Copyright: (c) 2016 - 2020, AOE GmbH
 License: GPLv3, <http://www.gnu.org/licenses/gpl-3.0.en.html>
 
 ## Contributing
@@ -30,9 +30,9 @@ License: GPLv3, <http://www.gnu.org/licenses/gpl-3.0.en.html>
 1. What does this extension provides?
 
 	Normally, you can update the TYPO3-refindex for ALL tables with this shell-command:
-	[path-to-your-php-installation] [path-to-typo3-installation]/htdocs/typo3/cli_dispatch.phpsh lowlevel_refindex -e
+	[path-to-your-php-installation] [path-to-typo3-installation]/htdocs/Packages/Libraries/bin/./typo3 referenceindex:update
 	e.g.:
-	/opt/php5/bin/php /srv/www/typo3/htdocs/typo3/cli_dispatch.phpsh lowlevel_refindex -e
+	/usr/bin/php /srv/www/typo3/htdocs/Packages/Libraries/bin/./typo3 referenceindex:update
 
 	But maybe, you only want to update the TYPO3-refindex for SPECIFIED tables (because you don't have the need to update the index for ALL tables)
 	or you want to update the tables via scheduler-task. If any of these reasons is your intention, then this extension is right for you!
@@ -46,6 +46,6 @@ License: GPLv3, <http://www.gnu.org/licenses/gpl-3.0.en.html>
 		* select other scheduler-task-staff (e.g. Start- and Stop-time, type and frequency)
 	* call the scheduler recurring via a cronjob
 		 The cronjob must execute this shell-command:
-		 [path-to-your-php-installation] [path-to-typo3-installation]/htdocs/typo3/cli_dispatch.phpsh scheduler
+		 [path-to-your-php-installation] [path-to-typo3-installation]/htdocs/Packages/Libraries/bin/./typo3 scheduler:run task-id
 		 e.g.:
-		 /opt/php5/bin/php /srv/www/typo3/htdocs/typo3/cli_dispatch.phpsh scheduler
+		 /usr/bin/php /srv/www/typo3/htdocs/Packages/Libraries/bin/./typo3 scheduler:run 5
