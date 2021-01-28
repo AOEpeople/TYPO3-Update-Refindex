@@ -17,13 +17,12 @@
         }
     ],
     "require": {
-        "php": "^7.0",
-        "typo3/cms-core": ">=8.7.0,<=8.7.99",
-        "typo3/cms-scheduler": ">=8.7.0,<=8.7.99"
+        "php": "^7.2",
+        "typo3/cms-core": "^8.7 || ^9.5 || ^10.4",
+        "typo3/cms-scheduler": "*"
     },
     "require-dev": {
-        "typo3/cms": "^8.7",
-        "nimut/testing-framework": "^4.1 || ^5.0"
+        "nimut/testing-framework": "*"
     },
     "autoload": {
         "psr-4": {
@@ -46,12 +45,12 @@
         ],
         "test:unit": [
             "[ -e .Build/bin/phpunit ] || composer update",
-            "TYPO3_PATH_ROOT=.Build/Web .Build/bin/phpunit -c .Build/vendor/nimut/testing-framework/res/Configuration/UnitTests.xml Tests/Unit/ --debug --verbose"
+            "TYPO3_PATH_ROOT=.Build/Web .Build/bin/phpunit -c .Build/vendor/nimut/testing-framework/res/Configuration/UnitTests.xml Tests/Unit/"
         ]
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0.1-dev"
+            "dev-master": "2.0.3-dev"
         },
         "typo3/cms": {
             "cms-package-dir": "{$vendor-dir}/typo3/cms",
