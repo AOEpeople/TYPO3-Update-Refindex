@@ -9,19 +9,19 @@ php:
 
 env:
   - TYPO3_VERSION=^8.7 COVERAGE=0
-  - TYPO3_VERSION=dev-master COVERAGE=0
+  - TYPO3_VERSION=dev-main COVERAGE=0
 
 matrix:
   exclude:
-    - env: TYPO3_VERSION=dev-master COVERAGE=0
+    - env: TYPO3_VERSION=dev-main COVERAGE=0
       php: 7.0
-    - env: TYPO3_VERSION=dev-master COVERAGE=0
+    - env: TYPO3_VERSION=dev-main COVERAGE=0
       php: 7.1
   include:
     - env: TYPO3_VERSION=^8.7 COVERAGE=1
       php: 7.2
   allow_failures:
-    - env: TYPO3_VERSION=dev-master COVERAGE=0
+    - env: TYPO3_VERSION=dev-main COVERAGE=0
 
 notifications:
   email:
