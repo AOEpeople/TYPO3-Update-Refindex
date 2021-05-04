@@ -53,6 +53,7 @@
             "dev-main": "2.0.3-dev"
         },
         "typo3/cms": {
+            "extension-key": "update_refindex",
             "cms-package-dir": "{$vendor-dir}/typo3/cms",
             "web-dir": ".Build/Web"
         }
