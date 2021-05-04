@@ -8,7 +8,7 @@
 # writing. "version" and "dependencies" must not be touched!
 ########################################################################
 
-$EM_CONF[$_EXTKEY] = [
+$EM_CONF['update_refindex'] = [
     'title' => 'update_refindex',
     'description' => 'extension contains scheduler-task to update refindex of TYPO3',
     'category' => '',
@@ -28,7 +28,7 @@ $EM_CONF[$_EXTKEY] = [
     'version' => '2.0.2',
     'constraints' => [
         'depends' => [
-            'typo3' => '8.7.0-8.7.99',
+            'typo3' => '8.7.0-10.4.99',
         ],
         'conflicts' => [],
         'suggests' => [],
