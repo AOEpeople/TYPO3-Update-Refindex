@@ -4,7 +4,7 @@ namespace Aoe\UpdateRefindex\Tests\Unit\Typo3;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2020 AOE GmbH <dev@aoe.com>
+ *  (c) 2021 AOE GmbH <dev@aoe.com>
  *
  *  All rights reserved
  *
@@ -27,8 +27,8 @@ namespace Aoe\UpdateRefindex\Tests\Unit\Typo3;
 
 use Aoe\UpdateRefindex\Typo3\RefIndex;
 use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\FetchMode;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
-use PDO;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Database\Connection;
@@ -71,7 +71,7 @@ class RefIndexTest extends UnitTestCase
         $GLOBALS['TCA'] = ['table_3' => [], 'table_0' => [], 'table_1' => []];
         $refIndex = new RefIndex();
 
-        $this->assertEquals(
+        self::assertEquals(
             ['table_0', 'table_1', 'table_3'],
             $refIndex->getExistingTables()
         );
@@ -89,7 +89,7 @@ class RefIndexTest extends UnitTestCase
 
         $refIndex = new RefIndex();
 
-        $this->assertInstanceOf(
+        self::assertInstanceOf(
             ReferenceIndex::class,
             $this->callInaccessibleMethod($refIndex, 'getReferenceIndex')
         );
@@ -132,9 +132,9 @@ class RefIndexTest extends UnitTestCase
         $refIndex = $this->getMockBuilder(RefIndex::class)
             ->setMethods(['getExistingTables', 'updateTable', 'deleteLostIndexes'])
             ->getMock();
-        $refIndex->expects($this->any())->method('getExistingTables')->willReturn(['table_1', 'table_2']);
-        $refIndex->expects($this->never())->method('updateTable');
-        $refIndex->expects($this->never())->method('deleteLostIndexes');
+        $refIndex->expects(self::any())->method('getExistingTables')->willReturn(['table_1', 'table_2']);
+        $refIndex->expects(self::never())->method('updateTable');
+        $refIndex->expects(self::never())->method('deleteLostIndexes');
 
         $refIndex->setSelectedTables(['some_table_not_configured_in_tca']);
         $refIndex->update();
@@ -149,7 +149,7 @@ class RefIndexTest extends UnitTestCase
         $refIndex = $this->getMockBuilder(RefIndex::class)
             ->setMethods(['getExistingTables'])
             ->getMock();
-        $refIndex->expects($this->once())->method('getExistingTables')->willReturn($existingTables);
+        $refIndex->expects(self::once())->method('getExistingTables')->willReturn($existingTables);
 
         $queryBuilderProphet = $this->getQueryBuilderProphet('sys_refindex');
         $queryBuilderMock = $queryBuilderProphet->reveal();
@@ -187,7 +187,7 @@ class RefIndexTest extends UnitTestCase
         $selectQueryBuilderMock = $testTableQueryBuilderProphet->reveal();
 
         $statementProphet = $this->prophesize(Statement::class);
-        $statementProphet->fetchAll(PDO::FETCH_ASSOC)->shouldBeCalledOnce()->willReturn($records);
+        $statementProphet->fetchAll(FetchMode::ASSOCIATIVE)->shouldBeCalledOnce()->willReturn($records);
 
         $testTableQueryBuilderProphet->select('uid')->shouldBeCalledOnce()->willReturn($selectQueryBuilderMock);
         $testTableQueryBuilderProphet->from($table)->shouldBeCalledOnce()->willReturn($selectQueryBuilderMock);
@@ -201,7 +201,7 @@ class RefIndexTest extends UnitTestCase
         $refTableQueryBuilderProphet->andWhere('`recuid` IN (:dcValue2)')->shouldBeCalledOnce()->willReturn($refTableQueryBuilderMock);
         $refTableQueryBuilderProphet->execute()->shouldBeCalledOnce();
 
-        $refTableQueryBuilderProphet->createNamedParameter($table, PDO::PARAM_STR)->willReturn(':dcValue1');
+        $refTableQueryBuilderProphet->createNamedParameter($table, Connection::PARAM_STR)->willReturn(':dcValue1');
         $refTableQueryBuilderProphet->createNamedParameter([0], Connection::PARAM_INT_ARRAY)->willReturn(':dcValue2');
 
         $this->callInaccessibleMethod($refIndex, 'updateTable', $table);
@@ -225,7 +225,7 @@ class RefIndexTest extends UnitTestCase
         $testTableQueryBuilderProphet->from($table)->shouldBeCalledOnce()->willReturn($selectQueryBuilderMock);
 
         $statementProphet = $this->prophesize(Statement::class);
-        $statementProphet->fetchAll(PDO::FETCH_ASSOC)->shouldBeCalledOnce()->willReturn([]);
+        $statementProphet->fetchAll(FetchMode::ASSOCIATIVE)->shouldBeCalledOnce()->willReturn([]);
 
         $refTableQueryBuilderProphet = $this->getQueryBuilderProphet('sys_refindex');
         $refTableQueryBuilderMock = $refTableQueryBuilderProphet->reveal();
@@ -237,7 +237,7 @@ class RefIndexTest extends UnitTestCase
         $refTableQueryBuilderProphet->groupBy('recuid')->shouldBeCalledOnce()->willReturn($refTableQueryBuilderMock);
         $refTableQueryBuilderProphet->execute()->shouldBeCalledOnce()->willReturn($statementProphet->reveal());
 
-        $refTableQueryBuilderProphet->createNamedParameter($table, PDO::PARAM_STR)->willReturn(':dcValue1');
+        $refTableQueryBuilderProphet->createNamedParameter($table, Connection::PARAM_STR)->willReturn(':dcValue1');
 
         self::assertSame([0], $this->callInaccessibleMethod($refIndex, 'getDeletableRecUidListFromTable', $table));
     }
