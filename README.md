@@ -9,7 +9,11 @@ This is a TYPO3-Extension to update the TYPO3-refindex for specified tables via 
 
 ## Download / Installation
 
-You can download and install this extension or use composer.
+You can download and install this extension from the [TER (TYPO3 Extension Repository)][1] or use composer.
+
+```shell script
+composer require aoe/update-refindex
+```
 
 ## Copyright / License
 
@@ -49,3 +53,5 @@ License: GPLv3, <http://www.gnu.org/licenses/gpl-3.0.en.html>
 		 [path-to-your-php-installation] [path-to-typo3-installation]/htdocs/Packages/Libraries/bin/./typo3 scheduler:run task-id
 		 e.g.:
 		 /usr/bin/php /srv/www/typo3/htdocs/Packages/Libraries/bin/./typo3 scheduler:run 5
+
+[1]: https://extensions.typo3.org/extension/update_refindex
