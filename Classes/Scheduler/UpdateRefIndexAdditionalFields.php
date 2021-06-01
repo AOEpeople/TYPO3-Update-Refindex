@@ -67,10 +67,10 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
         }
 
         // define value for fields
-        if ($schedulerModule->getCurrentAction() === Action::ADD) {
+        if ($schedulerModule->getCurrentAction()->equals(Action::ADD)) {
             $taskInfo[self::FIELD_ALL_TABLES] = false;
             $taskInfo[self::FIELD_SELECTED_TABLES] = [];
-        } elseif ($schedulerModule->getCurrentAction() === Action::EDIT) {
+        } elseif ($schedulerModule->getCurrentAction()->equals(Action::EDIT)) {
             $taskInfo[self::FIELD_ALL_TABLES] = $task->isUpdateAllTables();
             $taskInfo[self::FIELD_SELECTED_TABLES] = $task->getSelectedTables();
         } else {
