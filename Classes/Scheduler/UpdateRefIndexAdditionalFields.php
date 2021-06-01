@@ -60,17 +60,17 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
     public function getAdditionalFields(
         array &$taskInfo,
         $task,
-        SchedulerModuleController $parentObject
+        SchedulerModuleController $schedulerModule
     ) {
         if ($task !== null && !$task instanceof UpdateRefIndexTask) {
             throw new InvalidArgumentException('Task not of type UpdateRefIndexTask', 1622561874);
         }
 
         // define value for fields
-        if ($parentObject->getCurrentAction() === Action::ADD) {
+        if ($schedulerModule->getCurrentAction() === Action::ADD) {
             $taskInfo[self::FIELD_ALL_TABLES] = false;
             $taskInfo[self::FIELD_SELECTED_TABLES] = [];
-        } elseif ($parentObject->getCurrentAction() === Action::EDIT) {
+        } elseif ($schedulerModule->getCurrentAction() === Action::EDIT) {
             $taskInfo[self::FIELD_ALL_TABLES] = $task->isUpdateAllTables();
             $taskInfo[self::FIELD_SELECTED_TABLES] = $task->getSelectedTables();
         } else {
@@ -119,7 +119,7 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
      */
     public function validateAdditionalFields(
         array &$submittedData,
-        SchedulerModuleController $parentObject
+        SchedulerModuleController $schedulerModule
     ) {
         $isValid = true;
 
