@@ -4,7 +4,7 @@ namespace Aoe\UpdateRefindex\Scheduler;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2018 AOE GmbH <dev@aoe.com>
+ *  (c) 2021 AOE GmbH <dev@aoe.com>
  *
  *  All rights reserved
  *
@@ -25,7 +25,12 @@ namespace Aoe\UpdateRefindex\Scheduler;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use InvalidArgumentException;
+use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Scheduler\AdditionalFieldProviderInterface;
+use TYPO3\CMS\Scheduler\Controller\SchedulerModuleController;
+use TYPO3\CMS\Scheduler\Task\AbstractTask;
+use TYPO3\CMS\Scheduler\Task\Enumeration\Action;
 
 /**
  * class to define additional fields
@@ -45,23 +50,27 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
     const LL_REFERENCE = 'LLL:EXT:update_refindex/Resources/Private/Language/locallang_db.xml';
 
     /**
-     * @param array &$taskInfo
-     * @param \TYPO3\CMS\Scheduler\Task\AbstractTask $task
-     * @param \TYPO3\CMS\Scheduler\Controller\SchedulerModuleController $parentObject
-     * @return array
+     * Gets additional fields to render in the form to add/edit a task
+     *
+     * @param array $taskInfo Values of the fields from the add/edit task form
+     * @param \TYPO3\CMS\Scheduler\Task\AbstractTask $task The task object being edited. Null when adding a task!
+     * @param \TYPO3\CMS\Scheduler\Controller\SchedulerModuleController $schedulerModule Reference to the scheduler backend module
+     * @return array A two dimensional array: array('fieldId' => array('code' => '', 'label' => '', 'cshKey' => '', 'cshLabel' => ''))
      */
     public function getAdditionalFields(
         array &$taskInfo,
         $task,
-        \TYPO3\CMS\Scheduler\Controller\SchedulerModuleController $parentObject
+        SchedulerModuleController $parentObject
     ) {
-        /** @var UpdateRefIndexTask $task */
+        if ($task !== null && !$task instanceof UpdateRefIndexTask) {
+            throw new InvalidArgumentException('Task not of type UpdateRefIndexTask', 1622561874);
+        }
 
         // define value for fields
-        if ($parentObject->CMD == 'add') {
+        if ($parentObject->getCurrentAction() === Action::ADD) {
             $taskInfo[self::FIELD_ALL_TABLES] = false;
             $taskInfo[self::FIELD_SELECTED_TABLES] = [];
-        } elseif ($parentObject->CMD == 'edit') {
+        } elseif ($parentObject->getCurrentAction() === Action::EDIT) {
             $taskInfo[self::FIELD_ALL_TABLES] = $task->isUpdateAllTables();
             $taskInfo[self::FIELD_SELECTED_TABLES] = $task->getSelectedTables();
         } else {
@@ -85,29 +94,37 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
     }
 
     /**
-     * @param array $submittedData
-     * @param \TYPO3\CMS\Scheduler\Task\AbstractTask $task
+     * Takes care of saving the additional fields' values in the task's object
+     *
+     * @param array $submittedData An array containing the data submitted by the add/edit task form
+     * @param \TYPO3\CMS\Scheduler\Task\AbstractTask $task Reference to the scheduler backend module
      */
-    public function saveAdditionalFields(array $submittedData, \TYPO3\CMS\Scheduler\Task\AbstractTask $task)
+    public function saveAdditionalFields(array $submittedData, AbstractTask $task)
     {
+        if (!$task instanceof UpdateRefIndexTask) {
+            throw new InvalidArgumentException('Task not of type UpdateRefIndexTask', 1622562115);
+        }
+
         /** @var UpdateRefIndexTask $task */
         $task->setUpdateAllTables((boolean)$submittedData[self::FIELD_ALL_TABLES]);
         $task->setSelectedTables((array)$submittedData[self::FIELD_SELECTED_TABLES]);
     }
 
     /**
-     * @param array &$submittedData
-     * @param \TYPO3\CMS\Scheduler\Controller\SchedulerModuleController $parentObject
-     * @return boolean
+     * Validates the additional fields' values
+     *
+     * @param array $submittedData An array containing the data submitted by the add/edit task form
+     * @param \TYPO3\CMS\Scheduler\Controller\SchedulerModuleController $schedulerModule Reference to the scheduler backend module
+     * @return bool TRUE if validation was ok (or selected class is not relevant), FALSE otherwise
      */
     public function validateAdditionalFields(
         array &$submittedData,
-        \TYPO3\CMS\Scheduler\Controller\SchedulerModuleController $parentObject
+        SchedulerModuleController $parentObject
     ) {
         $isValid = true;
 
         if (!isset($submittedData[self::FIELD_ALL_TABLES])
-            || !\TYPO3\CMS\Core\Utility\MathUtility::isIntegerInRange((integer)$submittedData[self::FIELD_ALL_TABLES], 0, 1)
+            || !MathUtility::isIntegerInRange((integer)$submittedData[self::FIELD_ALL_TABLES], 0, 1)
         ) {
             $isValid = false;
         }
