@@ -3,7 +3,7 @@
 This is a TYPO3-Extension to update the TYPO3-refindex for specified tables via a scheduler-task.
 
 ## Build information
-[![Build Status](https://github.com/AOEpeople/TYPO3-Update-Refindex/workflows/CI/badge.svg?branch=main)](https://github.com/AOEpeople/TYPO3-Update-Refindex/actions)
+[![Tests](https://github.com/AOEpeople/TYPO3-Update-Refindex/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/AOEpeople/TYPO3-Update-Refindex/actions/workflows/tests.yml)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/AOEpeople/TYPO3-Update-Refindex/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/AOEpeople/TYPO3-Update-Refindex/?branch=main)
 [![Code Coverage](https://scrutinizer-ci.com/g/AOEpeople/TYPO3-Update-Refindex/badges/coverage.png?b=main)](https://scrutinizer-ci.com/g/AOEpeople/TYPO3-Update-Refindex/?branch=main)
 
