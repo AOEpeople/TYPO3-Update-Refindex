@@ -1,6 +1,12 @@
-name: CI
+name: Tests
 
-on: [ push, pull_request ]
+on:
+  push:
+    branches:
+      - 'TYPO3V8'
+  pull_request:
+    branches:
+      - 'TYPO3V8'
 
 jobs:
   build:
@@ -10,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        typo3: [ ^8.7, ^9.5, ^10.4 ]
+        typo3: [ ^8.7 ]
         php: [ '7.2', '7.3', '7.4' ]
 
     steps:
