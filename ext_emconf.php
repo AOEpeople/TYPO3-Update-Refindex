@@ -8,7 +8,7 @@
 # writing. "version" and "dependencies" must not be touched!
 ########################################################################
 
-$EM_CONF['update_refindex'] = [
+$EM_CONF[$_EXTKEY] = [
     'title' => 'update_refindex',
     'description' => 'extension contains scheduler-task to update refindex of TYPO3',
     'category' => '',
