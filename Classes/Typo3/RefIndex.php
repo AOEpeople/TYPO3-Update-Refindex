@@ -26,6 +26,7 @@ namespace Aoe\UpdateRefindex\Typo3;
  ***************************************************************/
 
 use Doctrine\DBAL\FetchMode;
+use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -162,7 +163,7 @@ class RefIndex
                     ->where(
                         $queryBuilder->expr()->eq(
                             'tablename',
-                            $queryBuilder->createNamedParameter($tableName, Connection::PARAM_STR)
+                            $queryBuilder->createNamedParameter($tableName, PDO::PARAM_STR)
                         )
                     )
                     ->andWhere(
@@ -195,7 +196,7 @@ class RefIndex
             ->select('recuid')
             ->from('sys_refindex')
             ->where(
-                $queryBuilder->expr()->eq('tablename', $queryBuilder->createNamedParameter($tableName, Connection::PARAM_STR))
+                $queryBuilder->expr()->eq('tablename', $queryBuilder->createNamedParameter($tableName, PDO::PARAM_STR))
             )
             ->andWhere($queryBuilder->expr()->notIn('recuid', $subQueryBuilder->getSQL()))
             ->groupBy('recuid');

@@ -29,6 +29,7 @@ use Aoe\UpdateRefindex\Typo3\RefIndex;
 use Doctrine\DBAL\Driver\Statement;
 use Doctrine\DBAL\FetchMode;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
+use PDO;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Database\Connection;
@@ -201,7 +202,7 @@ class RefIndexTest extends UnitTestCase
         $refTableQueryBuilderProphet->andWhere('`recuid` IN (:dcValue2)')->shouldBeCalledOnce()->willReturn($refTableQueryBuilderMock);
         $refTableQueryBuilderProphet->execute()->shouldBeCalledOnce();
 
-        $refTableQueryBuilderProphet->createNamedParameter($table, Connection::PARAM_STR)->willReturn(':dcValue1');
+        $refTableQueryBuilderProphet->createNamedParameter($table, PDO::PARAM_STR)->willReturn(':dcValue1');
         $refTableQueryBuilderProphet->createNamedParameter([0], Connection::PARAM_INT_ARRAY)->willReturn(':dcValue2');
 
         $this->callInaccessibleMethod($refIndex, 'updateTable', $table);
@@ -237,7 +238,7 @@ class RefIndexTest extends UnitTestCase
         $refTableQueryBuilderProphet->groupBy('recuid')->shouldBeCalledOnce()->willReturn($refTableQueryBuilderMock);
         $refTableQueryBuilderProphet->execute()->shouldBeCalledOnce()->willReturn($statementProphet->reveal());
 
-        $refTableQueryBuilderProphet->createNamedParameter($table, Connection::PARAM_STR)->willReturn(':dcValue1');
+        $refTableQueryBuilderProphet->createNamedParameter($table, PDO::PARAM_STR)->willReturn(':dcValue1');
 
         self::assertSame([0], $this->callInaccessibleMethod($refIndex, 'getDeletableRecUidListFromTable', $table));
     }
