@@ -101,7 +101,7 @@ class RefIndex
     {
         // update index of selected tables
         foreach ($this->getSelectedTables() as $selectedTable) {
-            if (in_array($selectedTable, $this->getExistingTables())) {
+            if (in_array($selectedTable, $this->getExistingTables(), true)) {
                 $this->updateTable($selectedTable);
             }
         }
