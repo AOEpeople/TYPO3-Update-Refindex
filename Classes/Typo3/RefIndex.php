@@ -4,7 +4,7 @@ namespace Aoe\UpdateRefindex\Typo3;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2020 AOE GmbH <dev@aoe.com>
+ *  (c) 2021 AOE GmbH <dev@aoe.com>
  *
  *  All rights reserved
  *
@@ -25,7 +25,7 @@ namespace Aoe\UpdateRefindex\Typo3;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use Exception;
+use Doctrine\DBAL\FetchMode;
 use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -102,7 +102,7 @@ class RefIndex
     {
         // update index of selected tables
         foreach ($this->getSelectedTables() as $selectedTable) {
-            if (array_search($selectedTable, $this->getExistingTables()) !== false) {
+            if (in_array($selectedTable, $this->getExistingTables(), true)) {
                 $this->updateTable($selectedTable);
             }
         }
@@ -145,7 +145,7 @@ class RefIndex
             ->select('uid')
             ->from($tableName)
             ->execute()
-            ->fetchAll(PDO::FETCH_ASSOC);
+            ->fetchAll(FetchMode::ASSOCIATIVE);
 
         // Update refindex table for all records in table
         foreach ($allRecs as $recdat) {
@@ -203,7 +203,7 @@ class RefIndex
 
         $allRecs = $queryBuilder
             ->execute()
-            ->fetchAll(PDO::FETCH_ASSOC);
+            ->fetchAll(FetchMode::ASSOCIATIVE);
 
         $recUidList = [0];
         foreach ($allRecs as $recdat) {

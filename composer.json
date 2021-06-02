@@ -18,7 +18,7 @@
     ],
     "require": {
         "php": "^7.2",
-        "typo3/cms-core": "^8.7 || ^9.5 || ^10.4",
+        "typo3/cms-core": "^9.5 || ^10.4",
         "typo3/cms-scheduler": "*"
     },
     "require-dev": {
@@ -50,9 +50,10 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "2.0.3-dev"
+            "dev-main": "9.0.0-dev"
         },
         "typo3/cms": {
+            "extension-key": "update_refindex",
             "cms-package-dir": "{$vendor-dir}/typo3/cms",
             "web-dir": ".Build/Web"
         }

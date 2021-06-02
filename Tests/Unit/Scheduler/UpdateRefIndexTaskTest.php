@@ -4,7 +4,7 @@ namespace Aoe\UpdateRefindex\Tests\Unit\Scheduler;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2018 AOE GmbH <dev@aoe.com>
+ *  (c) 2021 AOE GmbH <dev@aoe.com>
  *
  *  All rights reserved
  *
@@ -62,7 +62,7 @@ class UpdateRefIndexTaskTest extends UnitTestCase
             ->setMethods(['getRefIndex'])
             ->getMock();
 
-        $this->task->expects($this->any())->method('getRefIndex')->willReturn($this->refIndex);
+        $this->task->expects(self::any())->method('getRefIndex')->willReturn($this->refIndex);
     }
 
     /**
@@ -82,12 +82,12 @@ class UpdateRefIndexTaskTest extends UnitTestCase
         $selectedTables = ['table1', 'table2'];
 
         $this->refIndex
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('setSelectedTables')
             ->with($selectedTables)
             ->willReturn($this->refIndex);
         $this->refIndex
-            ->expects($this->once())->method('update');
+            ->expects(self::once())->method('update');
 
         $this->task->setSelectedTables($selectedTables);
         $this->task->execute();
@@ -101,16 +101,16 @@ class UpdateRefIndexTaskTest extends UnitTestCase
         $allTables = ['table1', 'table2', 'table3', 'table4', 'table5'];
 
         $this->refIndex
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getExistingTables')
             ->willReturn($allTables);
         $this->refIndex
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('setSelectedTables')
             ->with($allTables)
             ->willReturn($this->refIndex);
         $this->refIndex
-            ->expects($this->once())->method('update');
+            ->expects(self::once())->method('update');
 
         $this->task->setUpdateAllTables(true);
         $this->task->execute();
