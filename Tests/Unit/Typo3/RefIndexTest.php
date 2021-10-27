@@ -39,6 +39,7 @@ use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\QueryRestrictionContainerInterface;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * Tests class RefIndex
@@ -48,6 +49,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RefIndexTest extends UnitTestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var ObjectProphecy|ConnectionPool
      */
@@ -56,7 +59,7 @@ class RefIndexTest extends UnitTestCase
     /**
      * Cleans up the environment after running a test.
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         GeneralUtility::purgeInstances();
         unset($this->connectionPool);
@@ -175,8 +178,10 @@ class RefIndexTest extends UnitTestCase
             ->disableOriginalConstructor()
             ->setMethods(['updateRefIndexTable'])
             ->getMock();
-        $referenceIndexMock->expects(self::at(0))->method('updateRefIndexTable')->with(self::equalTo($table), self::equalTo(1));
-        $referenceIndexMock->expects(self::at(1))->method('updateRefIndexTable')->with(self::equalTo($table), self::equalTo(2));
+        $referenceIndexMock->expects(self::exactly(2))->method('updateRefIndexTable')->withConsecutive(
+            [$table, 1, false],
+            [$table, 2, false]
+        );
 
         $refIndex = $this->getMockBuilder(RefIndex::class)
             ->setMethods(['getReferenceIndex', 'getDeletableRecUidListFromTable'])

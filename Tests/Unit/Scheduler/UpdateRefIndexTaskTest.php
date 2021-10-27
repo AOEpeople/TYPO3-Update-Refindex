@@ -50,7 +50,7 @@ class UpdateRefIndexTaskTest extends UnitTestCase
     /**
      * Prepares the environment before running a test.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->refIndex = $this->getMockBuilder(RefIndex::class)
             ->disableOriginalConstructor()
@@ -68,7 +68,7 @@ class UpdateRefIndexTaskTest extends UnitTestCase
     /**
      * Cleans up the environment after running a test.
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->refIndex);
         unset($this->task);

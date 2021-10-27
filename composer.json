@@ -18,11 +18,12 @@
     ],
     "require": {
         "php": "^7.2",
-        "typo3/cms-core": "^9.5 || ^10.4",
+        "typo3/cms-core": "^9.5 || ^10.4 || ^11.5",
         "typo3/cms-scheduler": "*"
     },
     "require-dev": {
-        "nimut/testing-framework": "*"
+        "nimut/testing-framework": "*",
+        "phpspec/prophecy-phpunit": "^2.0"
     },
     "autoload": {
         "psr-4": {
