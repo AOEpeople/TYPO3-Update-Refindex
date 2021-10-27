@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         typo3: [ ^9.5, ^10.4 , ^11.5]
-        php: [ '7.3', '7.4' ]
+        php: [ '7.4' ]
 
     steps:
       - name: Start database server
