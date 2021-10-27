@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         typo3: [ ^9.5, ^10.4 , ^11.5]
-        php: [ '7.2', '7.3', '7.4' ]
+        php: [ '7.3', '7.4' ]
 
     steps:
       - name: Start database server
@@ -60,13 +60,13 @@ jobs:
           .Build/bin/phpunit --colors -c $UNIT_XML Tests/Unit
 
       - name: Unit Tests with coverage
-        if: matrix.typo3 == '^10.4' && matrix.php == '7.2'
+        if: matrix.typo3 == '^10.4' && matrix.php == '7.3'
         run: |
           export "UNIT_XML"=.Build/vendor/nimut/testing-framework/res/Configuration/UnitTests.xml
           .Build/bin/phpunit --whitelist Classes --coverage-clover=unittest-coverage.clover --colors -c $UNIT_XML Tests/Unit/
 
       - name: Upload coverage results to Scrutinizer
-        if: matrix.typo3 == '^10.4' && matrix.php == '7.2'
+        if: matrix.typo3 == '^10.4' && matrix.php == '7.3'
         run: |
           wget https://scrutinizer-ci.com/ocular.phar
           php ocular.phar code-coverage:upload --format=php-clover unittest-coverage.clover
