@@ -60,7 +60,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "9.0.x-dev"
+            "dev-main": "9.1.x-dev"
         },
         "typo3/cms": {
             "extension-key": "update_refindex",
