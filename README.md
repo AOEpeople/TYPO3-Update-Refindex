@@ -17,7 +17,7 @@ composer require aoe/update-refindex
 
 ## Copyright / License
 
-Copyright: (c) 2016 - 2021, AOE GmbH
+Copyright: (c) 2016 - 2022, AOE GmbH
 License: GPLv3, <http://www.gnu.org/licenses/gpl-3.0.en.html>
 
 ## Contributing
@@ -42,7 +42,7 @@ License: GPLv3, <http://www.gnu.org/licenses/gpl-3.0.en.html>
 	or you want to update the tables via scheduler-task. If any of these reasons is your intention, then this extension is right for you!
 
 2. How to configure this extension?
-    * create BE-user named '_cli_scheduler' (the BE-user doesn't must have any access rights)
+    * create BE-user named '_cli_scheduler' (the BE-user doesn't have any access rights)
 	* Go to the BE-module 'Scheduler'
 	* Add a new scheduler-task:
 	    * Choose the Class 'Update Refindex of TYPO3 [update_refindex]'
