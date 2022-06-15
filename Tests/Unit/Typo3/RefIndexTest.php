@@ -120,9 +120,9 @@ class RefIndexTest extends UnitTestCase
         $refIndex = $this->getMockBuilder(RefIndex::class)
             ->setMethods(['getExistingTables', 'updateTable', 'deleteLostIndexes'])
             ->getMock();
-        $refIndex->expects($this->any())->method('getExistingTables')->willReturn($selectedTables);
-        $refIndex->expects($this->exactly(2))->method('updateTable')->withConsecutive([$selectedTables[0]], [$selectedTables[1]]);
-        $refIndex->expects($this->once())->method('deleteLostIndexes');
+        $refIndex->expects(self::any())->method('getExistingTables')->willReturn($selectedTables);
+        $refIndex->expects(self::exactly(2))->method('updateTable')->withConsecutive([$selectedTables[0]], [$selectedTables[1]]);
+        $refIndex->expects(self::once())->method('deleteLostIndexes');
 
         $refIndex->setSelectedTables($selectedTables);
         $refIndex->update();

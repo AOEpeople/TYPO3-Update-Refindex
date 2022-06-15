@@ -47,7 +47,7 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
     const FIELD_SELECTED_TABLES = 'updateRefindexSelectedTables';
 
     /** Locallang reference */
-    const LL_REFERENCE = 'LLL:EXT:update_refindex/Resources/Private/Language/locallang_db.xml';
+    const LL_REFERENCE = 'LLL:EXT:update_refindex/Resources/Private/Language/locallang.xlf';
 
     /**
      * Gets additional fields to render in the form to add/edit a task
