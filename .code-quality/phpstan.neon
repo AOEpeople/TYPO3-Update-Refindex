@@ -9,24 +9,21 @@ parameters:
     level: max
     paths:
         - "../Classes/"
-        - "../Tests/"
 
     inferPrivatePropertyTypeFromConstructor: true
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
-    checkAlwaysTrueCheckTypeFunctionCall: false
-    checkAlwaysTrueStrictComparison: false
 
 services:
     - class: Symplify\Astral\Naming\SimpleNameResolver
-    - class: Symplify\PackageBuilder\Php\TypeChecker
-    - class: Symplify\PackageBuilder\Matcher\ArrayStringAndFnMatcher
     - class: Symplify\PHPStanRules\CognitiveComplexity\AstCognitiveComplexityAnalyzer
     - class: Symplify\PHPStanRules\CognitiveComplexity\NodeTraverser\ComplexityNodeTraverserFactory
     - class: Symplify\PHPStanRules\CognitiveComplexity\DataCollector\CognitiveComplexityDataCollector
     - class: Symplify\PHPStanRules\CognitiveComplexity\NodeVisitor\NestingNodeVisitor
     - class: Symplify\PHPStanRules\CognitiveComplexity\NodeVisitor\ComplexityNodeVisitor
     - class: Symplify\PHPStanRules\CognitiveComplexity\NodeAnalyzer\ComplexityAffectingNodeFinder
+    - class: Symplify\PackageBuilder\Php\TypeChecker
+    - class: Symplify\PackageBuilder\Matcher\ArrayStringAndFnMatcher
     - class: Symplify\PHPStanRules\TypeAnalyzer\ObjectTypeAnalyzer
     - class: Symplify\PHPStanRules\TypeAnalyzer\TypeUnwrapper
     -
