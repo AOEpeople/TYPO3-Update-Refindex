@@ -1,4 +1,5 @@
 <?php
+
 namespace Aoe\UpdateRefindex\Scheduler;
 
 /***************************************************************
@@ -65,8 +66,11 @@ class UpdateRefIndexTask extends AbstractTask
     {
         $shellExitCode = true;
         try {
-            $selectedTables = $this->isUpdateAllTables() ? $this->getRefIndex()->getExistingTables() : $this->getSelectedTables();
-            $this->getRefIndex()->setSelectedTables($selectedTables)->update();
+            $selectedTables = $this->isUpdateAllTables() ? $this->getRefIndex()
+                ->getExistingTables() : $this->getSelectedTables();
+            $this->getRefIndex()
+                ->setSelectedTables($selectedTables)
+                ->update();
         } catch (\Exception $e) {
             $shellExitCode = false;
         }

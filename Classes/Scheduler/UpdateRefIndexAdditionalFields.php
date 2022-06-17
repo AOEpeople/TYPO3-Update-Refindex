@@ -1,4 +1,5 @@
 <?php
+
 namespace Aoe\UpdateRefindex\Scheduler;
 
 /***************************************************************
@@ -43,11 +44,13 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
     /**
      * Field name constants
      */
-    const FIELD_ALL_TABLES = 'updateRefindexAllTables';
-    const FIELD_SELECTED_TABLES = 'updateRefindexSelectedTables';
+    public const FIELD_ALL_TABLES = 'updateRefindexAllTables';
+    public const FIELD_SELECTED_TABLES = 'updateRefindexSelectedTables';
 
-    /** Locallang reference */
-    const LL_REFERENCE = 'LLL:EXT:update_refindex/Resources/Private/Language/locallang.xlf';
+    /**
+     * Locallang reference
+     */
+    public const LL_REFERENCE = 'LLL:EXT:update_refindex/Resources/Private/Language/locallang.xlf';
 
     /**
      * Gets additional fields to render in the form to add/edit a task
@@ -82,11 +85,11 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
         $additionalFields = [
             self::FIELD_ALL_TABLES => [
                 'code' => $this->getCheckbox($taskInfo[self::FIELD_ALL_TABLES]),
-                'label' => $GLOBALS['LANG']->sL(self::LL_REFERENCE . ':scheduler_task.updateRefindex.fieldUpdateAllTables.label')
+                'label' => $GLOBALS['LANG']->sL(self::LL_REFERENCE . ':scheduler_task.updateRefindex.fieldUpdateAllTables.label'),
             ],
             self::FIELD_SELECTED_TABLES => [
                 'code' => $this->getSelectBox($taskInfo[self::FIELD_SELECTED_TABLES]),
-                'label' => $GLOBALS['LANG']->sL(self::LL_REFERENCE . ':scheduler_task.updateRefindex.fieldSelectedTables.label')
+                'label' => $GLOBALS['LANG']->sL(self::LL_REFERENCE . ':scheduler_task.updateRefindex.fieldSelectedTables.label'),
             ],
         ];
 
@@ -106,8 +109,8 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
         }
 
         /** @var UpdateRefIndexTask $task */
-        $task->setUpdateAllTables((boolean)$submittedData[self::FIELD_ALL_TABLES]);
-        $task->setSelectedTables((array)$submittedData[self::FIELD_SELECTED_TABLES]);
+        $task->setUpdateAllTables((bool) $submittedData[self::FIELD_ALL_TABLES]);
+        $task->setSelectedTables((array) $submittedData[self::FIELD_SELECTED_TABLES]);
     }
 
     /**
@@ -124,7 +127,7 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
         $isValid = true;
 
         if (!isset($submittedData[self::FIELD_ALL_TABLES])
-            || !MathUtility::isIntegerInRange((integer)$submittedData[self::FIELD_ALL_TABLES], 0, 1)
+            || !MathUtility::isIntegerInRange((int) $submittedData[self::FIELD_ALL_TABLES], 0, 1)
         ) {
             $isValid = false;
         }
@@ -146,7 +149,7 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
      */
     private function getCheckbox($isChecked)
     {
-        $checked = true === $isChecked ? 'checked="checked" ' : '';
+        $checked = $isChecked === true ? 'checked="checked" ' : '';
         $content = '<input type="hidden" name="tx_scheduler[' . self::FIELD_ALL_TABLES . ']" value="0" />';
         $content .= '<input type="checkbox" ' . $checked . 'value="1"'
             . ' name="tx_scheduler[' . self::FIELD_ALL_TABLES . ']"'
@@ -181,7 +184,9 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
      */
     private function getSelectBox(array $selected)
     {
-        $contentArray = ['<select id="task_' . self::FIELD_SELECTED_TABLES . '" name="tx_scheduler[' . self::FIELD_SELECTED_TABLES . '][]" size="20" multiple="multiple" class="form-control">'];
+        $contentArray = [
+            '<select id="task_' . self::FIELD_SELECTED_TABLES . '" name="tx_scheduler[' . self::FIELD_SELECTED_TABLES . '][]" size="20" multiple="multiple" class="form-control">',
+        ];
 
         foreach ($this->getOptionsForSelectBox() as $value => $label) {
             $selectAttribute = in_array($value, $selected) ? ' selected="selected"' : '';

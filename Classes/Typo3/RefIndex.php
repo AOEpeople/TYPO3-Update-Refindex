@@ -1,4 +1,5 @@
 <?php
+
 namespace Aoe\UpdateRefindex\Typo3;
 
 /***************************************************************
@@ -41,7 +42,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RefIndex
 {
-    const ARRAY_CHUNK_SIZE = 100;
+    public const ARRAY_CHUNK_SIZE = 100;
 
     /**
      * @var ConnectionPool
@@ -123,10 +124,11 @@ class RefIndex
         $queryBuilder
             ->delete('sys_refindex')
             ->where(
-                $queryBuilder->expr()->notIn(
-                    'tablename',
-                    $queryBuilder->createNamedParameter($this->getExistingTables(), Connection::PARAM_STR_ARRAY)
-                )
+                $queryBuilder->expr()
+                    ->notIn(
+                        'tablename',
+                        $queryBuilder->createNamedParameter($this->getExistingTables(), Connection::PARAM_STR_ARRAY)
+                    )
             );
         $queryBuilder->execute();
     }
@@ -149,7 +151,8 @@ class RefIndex
 
         // Update refindex table for all records in table
         foreach ($allRecs as $recdat) {
-            $this->getReferenceIndex()->updateRefIndexTable($tableName, $recdat['uid']);
+            $this->getReferenceIndex()
+                ->updateRefIndexTable($tableName, $recdat['uid']);
         }
 
         $recUidList = $this->getDeletableRecUidListFromTable($tableName);
@@ -161,16 +164,18 @@ class RefIndex
                 $queryBuilder
                     ->delete('sys_refindex')
                     ->where(
-                        $queryBuilder->expr()->eq(
-                            'tablename',
-                            $queryBuilder->createNamedParameter($tableName, PDO::PARAM_STR)
-                        )
+                        $queryBuilder->expr()
+                            ->eq(
+                                'tablename',
+                                $queryBuilder->createNamedParameter($tableName, PDO::PARAM_STR)
+                            )
                     )
                     ->andWhere(
-                        $queryBuilder->expr()->in(
-                            'recuid',
-                            $queryBuilder->createNamedParameter($recUidChunk, Connection::PARAM_INT_ARRAY)
-                        )
+                        $queryBuilder->expr()
+                            ->in(
+                                'recuid',
+                                $queryBuilder->createNamedParameter($recUidChunk, Connection::PARAM_INT_ARRAY)
+                            )
                     );
                 $queryBuilder->execute();
             }
@@ -196,7 +201,8 @@ class RefIndex
             ->select('recuid')
             ->from('sys_refindex')
             ->where(
-                $queryBuilder->expr()->eq('tablename', $queryBuilder->createNamedParameter($tableName, PDO::PARAM_STR))
+                $queryBuilder->expr()
+                    ->eq('tablename', $queryBuilder->createNamedParameter($tableName, PDO::PARAM_STR))
             )
             ->andWhere($queryBuilder->expr()->notIn('recuid', $subQueryBuilder->getSQL()))
             ->groupBy('recuid');
@@ -207,7 +213,7 @@ class RefIndex
 
         $recUidList = [0];
         foreach ($allRecs as $recdat) {
-            $recUidList[] = (int)$recdat['recuid'];
+            $recUidList[] = (int) $recdat['recuid'];
         }
 
         return $recUidList;
@@ -218,7 +224,7 @@ class RefIndex
      */
     protected function getReferenceIndex(): ReferenceIndex
     {
-        if (null === $this->referenceIndex) {
+        if ($this->referenceIndex === null) {
             $this->referenceIndex = GeneralUtility::makeInstance(ReferenceIndex::class);
         }
 
@@ -235,8 +241,9 @@ class RefIndex
         $connectionPool = $this->getConnectionPool();
         $queryBuilder = $connectionPool->getQueryBuilderForTable($table);
 
-        if (false === $useEnableFields) {
-            $queryBuilder->getRestrictions()->removeAll();
+        if ($useEnableFields === false) {
+            $queryBuilder->getRestrictions()
+                ->removeAll();
         }
 
         return $queryBuilder;
@@ -247,7 +254,7 @@ class RefIndex
      */
     private function getConnectionPool(): ConnectionPool
     {
-        if (null === $this->connectionPool) {
+        if ($this->connectionPool === null) {
             $this->connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
         }
 
