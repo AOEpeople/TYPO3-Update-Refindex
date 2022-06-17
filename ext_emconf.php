@@ -11,8 +11,8 @@
 $EM_CONF[$_EXTKEY] = [
     'title' => 'update_refindex',
     'description' => 'extension contains scheduler-task to update refindex of TYPO3',
-    'category' => '',
-    'author' => '',
+    'category' => 'be',
+    'author' => 'AOE GmbH',
     'author_email' => 'dev@aoe.com',
     'author_company' => 'AOE GmbH',
     'shy' => '',
