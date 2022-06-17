@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2022-06-15T14:00:00Z" product-name="update-refindex">
+        <header/>
+        <body>
+            <trans-unit id="scheduler_task_updateRefindex.name" xml:space="preserve">
+                <source>Update refindex of TYPO3</source>
+            </trans-unit>
+            <trans-unit id="scheduler_task_updateRefindex.description" xml:space="preserve">
+                <source>Updates refindex of TYPO3</source>
+            </trans-unit>
+            <trans-unit id="scheduler_task.updateRefindex.fieldSelectedTables.label" xml:space="preserve">
+                <source>Selected tables</source>
+            </trans-unit>
+            <trans-unit id="scheduler_task.updateRefindex.fieldUpdateAllTables.label" xml:space="preserve">
+                <source>Process all tables</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
