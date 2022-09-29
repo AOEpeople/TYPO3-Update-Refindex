@@ -42,53 +42,34 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RefIndex
 {
+    /**
+     * @var int
+     */
     public const ARRAY_CHUNK_SIZE = 100;
 
-    /**
-     * @var ConnectionPool
-     */
-    private $connectionPool;
+    private ?ConnectionPool $connectionPool = null;
 
-    /**
-     * @var array
-     */
-    private $existingTables;
+    private array $existingTables = [];
 
-    /**
-     * @var array
-     */
-    private $selectedTables = [];
+    private array $selectedTables = [];
 
-    /**
-     * @var ReferenceIndex
-     */
-    private $referenceIndex;
+    private ?ReferenceIndex $referenceIndex = null;
 
-    /**
-     * @param array $selectedTables
-     * @return RefIndex
-     */
-    public function setSelectedTables(array $selectedTables)
+    public function setSelectedTables(array $selectedTables): self
     {
         $this->selectedTables = $selectedTables;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getSelectedTables()
+    public function getSelectedTables(): array
     {
         return $this->selectedTables;
     }
 
-    /**
-     * @return array
-     */
-    public function getExistingTables()
+    public function getExistingTables(): array
     {
-        if ($this->existingTables === null) {
+        if ($this->existingTables === []) {
             $this->existingTables = array_keys($GLOBALS['TCA']);
             sort($this->existingTables);
         }
@@ -99,17 +80,17 @@ class RefIndex
     /**
      * update refIndex of selected tables
      */
-    public function update()
+    public function update(): void
     {
         // update index of selected tables
-        foreach ($this->getSelectedTables() as $selectedTable) {
+        foreach ($this->selectedTables as $selectedTable) {
             if (in_array($selectedTable, $this->getExistingTables(), true)) {
                 $this->updateTable($selectedTable);
             }
         }
 
         // delete lost indexes ONLY if index of ALL tables where updated
-        if (count($this->getExistingTables()) === count($this->getSelectedTables())) {
+        if (count($this->getExistingTables()) === count($this->selectedTables)) {
             $this->deleteLostIndexes();
         }
     }
@@ -118,7 +99,7 @@ class RefIndex
      * Searching lost indexes for non-existing tables
      * this code is inspired by the code of method 'updateIndex' in class '\TYPO3\CMS\Core\Database\ReferenceIndex'
      */
-    protected function deleteLostIndexes()
+    protected function deleteLostIndexes(): void
     {
         $queryBuilder = $this->getQueryBuilderForTable('sys_refindex');
         $queryBuilder
@@ -136,10 +117,8 @@ class RefIndex
     /**
      * update table
      * this code is inspired by the code of method 'updateIndex' in class '\TYPO3\CMS\Core\Database\ReferenceIndex'
-     *
-     * @param string $tableName
      */
-    protected function updateTable($tableName)
+    protected function updateTable(string $tableName): void
     {
         // Select all records from table, including deleted records
         $queryBuilder = $this->getQueryBuilderForTable($tableName);
@@ -219,9 +198,6 @@ class RefIndex
         return $recUidList;
     }
 
-    /**
-     * @return ReferenceIndex
-     */
     protected function getReferenceIndex(): ReferenceIndex
     {
         if ($this->referenceIndex === null) {
@@ -231,17 +207,12 @@ class RefIndex
         return $this->referenceIndex;
     }
 
-    /**
-     * @param string $table
-     * @param bool   $useEnableFields
-     * @return QueryBuilder
-     */
     private function getQueryBuilderForTable(string $table, bool $useEnableFields = false): QueryBuilder
     {
         $connectionPool = $this->getConnectionPool();
         $queryBuilder = $connectionPool->getQueryBuilderForTable($table);
 
-        if ($useEnableFields === false) {
+        if (!$useEnableFields) {
             $queryBuilder->getRestrictions()
                 ->removeAll();
         }
@@ -249,9 +220,6 @@ class RefIndex
         return $queryBuilder;
     }
 
-    /**
-     * @return ConnectionPool
-     */
     private function getConnectionPool(): ConnectionPool
     {
         if ($this->connectionPool === null) {
