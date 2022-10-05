@@ -40,22 +40,15 @@ class UpdateRefIndexTask extends AbstractTask
 {
     /**
      * Boolean flag indicating if all existing tables should be processed
-     *
-     * @var boolean
      */
-    public $updateAllTables = false;
+    public bool $updateAllTables = false;
 
     /**
      * Comma separated list of tables
-     *
-     * @var string
      */
-    public $updateRefindexSelectedTables;
+    public string $updateRefindexSelectedTables;
 
-    /**
-     * @var RefIndex
-     */
-    private $refIndex;
+    private ?object $refIndex = null;
 
     /**
      * execute the task
@@ -66,54 +59,39 @@ class UpdateRefIndexTask extends AbstractTask
     {
         $shellExitCode = true;
         try {
-            $selectedTables = $this->isUpdateAllTables() ? $this->getRefIndex()
+            $selectedTables = $this->updateAllTables ? $this->getRefIndex()
                 ->getExistingTables() : $this->getSelectedTables();
             $this->getRefIndex()
                 ->setSelectedTables($selectedTables)
                 ->update();
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             $shellExitCode = false;
         }
 
         return $shellExitCode;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isUpdateAllTables()
+    public function isUpdateAllTables(): bool
     {
         return $this->updateAllTables;
     }
 
-    /**
-     * @param boolean $updateAllTables
-     */
-    public function setUpdateAllTables($updateAllTables)
+    public function setUpdateAllTables(bool $updateAllTables): void
     {
         $this->updateAllTables = $updateAllTables;
     }
 
-    /**
-     * @return array
-     */
-    public function getSelectedTables()
+    public function getSelectedTables(): array
     {
         return explode(',', $this->updateRefindexSelectedTables);
     }
 
-    /**
-     * @param array $selectedTables
-     */
-    public function setSelectedTables(array $selectedTables)
+    public function setSelectedTables(array $selectedTables): void
     {
         $this->updateRefindexSelectedTables = implode(',', $selectedTables);
     }
 
-    /**
-     * @return RefIndex
-     */
-    protected function getRefIndex()
+    protected function getRefIndex(): RefIndex
     {
         if ($this->refIndex === null) {
             $this->refIndex = GeneralUtility::makeInstance(RefIndex::class);

@@ -43,12 +43,19 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
 {
     /**
      * Field name constants
+     * @var string
      */
     public const FIELD_ALL_TABLES = 'updateRefindexAllTables';
+
+    /**
+     * Field name constants
+     * @var string
+     */
     public const FIELD_SELECTED_TABLES = 'updateRefindexSelectedTables';
 
     /**
      * Locallang reference
+     * @var string
      */
     public const LL_REFERENCE = 'LLL:EXT:update_refindex/Resources/Private/Language/locallang.xlf';
 
@@ -102,7 +109,7 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
      * @param array $submittedData An array containing the data submitted by the add/edit task form
      * @param \TYPO3\CMS\Scheduler\Task\AbstractTask $task Reference to the scheduler backend module
      */
-    public function saveAdditionalFields(array $submittedData, AbstractTask $task)
+    public function saveAdditionalFields(array $submittedData, AbstractTask $task): void
     {
         if (!$task instanceof UpdateRefIndexTask) {
             throw new InvalidArgumentException('Task not of type UpdateRefIndexTask', 1622562115);
@@ -123,22 +130,15 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
     public function validateAdditionalFields(
         array &$submittedData,
         SchedulerModuleController $schedulerModule
-    ) {
-        $isValid = true;
-
+    ): bool {
         if (!isset($submittedData[self::FIELD_ALL_TABLES])
             || !MathUtility::isIntegerInRange((int) $submittedData[self::FIELD_ALL_TABLES], 0, 1)
         ) {
-            $isValid = false;
+            return false;
         }
 
-        if (isset($submittedData[self::FIELD_SELECTED_TABLES])
-            && count($submittedData[self::FIELD_SELECTED_TABLES]) === 0
-        ) {
-            $isValid = false;
-        }
-
-        return $isValid;
+        return !(isset($submittedData[self::FIELD_SELECTED_TABLES])
+            && count($submittedData[self::FIELD_SELECTED_TABLES]) === 0);
     }
 
     /**
@@ -149,13 +149,11 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
      */
     private function getCheckbox($isChecked)
     {
-        $checked = $isChecked === true ? 'checked="checked" ' : '';
+        $checked = $isChecked ? 'checked="checked" ' : '';
         $content = '<input type="hidden" name="tx_scheduler[' . self::FIELD_ALL_TABLES . ']" value="0" />';
-        $content .= '<input type="checkbox" ' . $checked . 'value="1"'
+        return $content . '<input type="checkbox" ' . $checked . 'value="1"'
             . ' name="tx_scheduler[' . self::FIELD_ALL_TABLES . ']"'
             . ' id="task_' . self::FIELD_ALL_TABLES . '" />';
-
-        return $content;
     }
 
     /**
@@ -179,7 +177,6 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
     /**
      * Generates HTML selectbox for field 'selectedTables'
      *
-     * @param array $selected
      * @return string
      */
     private function getSelectBox(array $selected)
@@ -194,8 +191,6 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
         }
 
         $contentArray[] = '</select>';
-        $content = implode("\n", $contentArray);
-
-        return $content;
+        return implode("\n", $contentArray);
     }
 }

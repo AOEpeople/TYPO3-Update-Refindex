@@ -26,6 +26,7 @@ use Rector\Naming\Rector\Foreach_\RenameForeachValueVariableToMatchMethodCallRet
 use Rector\Naming\Rector\Property\MakeBoolPropertyRespectIsHasWasMethodNamingRector;
 use Rector\Php71\Rector\FuncCall\RemoveExtraParametersRector;
 use Rector\Php74\Rector\LNumber\AddLiteralSeparatorToNumberRector;
+use Rector\Php80\Rector\Catch_\RemoveUnusedVariableInCatchRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Privatization\Rector\Class_\ChangeReadOnlyVariableWithDefaultValueToConstantRector;
 use Rector\Privatization\Rector\Class_\FinalizeClassesWithoutChildrenRector;
@@ -95,6 +96,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             ChangeReadOnlyVariableWithDefaultValueToConstantRector::class,
             PrivatizeLocalPropertyToPrivatePropertyRector::class,
             RemoveDelegatingParentCallRector::class,
+            RemoveUnusedVariableInCatchRector::class,
 
             // @todo strict php
             ArgumentAdderRector::class,
