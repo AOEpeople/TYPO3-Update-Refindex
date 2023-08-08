@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Aoe\UpdateRefindex\Scheduler;
 
 /***************************************************************
@@ -34,6 +32,9 @@ use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
 /**
  * scheduler-task to update refindex of TYPO3
+ *
+ * @package update_refindex
+ * @subpackage Scheduler
  */
 class UpdateRefIndexTask extends AbstractTask
 {
@@ -56,7 +57,7 @@ class UpdateRefIndexTask extends AbstractTask
     {
         $shellExitCode = true;
         try {
-            $selectedTables = $this->isUpdateAllTables() ? $this->getRefIndex()
+            $selectedTables = $this->updateAllTables ? $this->getRefIndex()
                 ->getExistingTables() : $this->getSelectedTables();
             $this->getRefIndex()
                 ->setSelectedTables($selectedTables)
