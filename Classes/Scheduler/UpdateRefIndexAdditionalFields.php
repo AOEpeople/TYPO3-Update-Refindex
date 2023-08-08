@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Aoe\UpdateRefindex\Scheduler;
 
 /***************************************************************
@@ -35,9 +37,6 @@ use TYPO3\CMS\Scheduler\Task\Enumeration\Action;
 
 /**
  * class to define additional fields
- *
- * @package update_refindex
- * @subpackage Scheduler
  */
 class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
 {
@@ -181,7 +180,7 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
         ];
 
         foreach ($this->getOptionsForSelectBox() as $value => $label) {
-            $selectAttribute = in_array($value, $selected) ? ' selected="selected"' : '';
+            $selectAttribute = in_array($value, $selected, true) ? ' selected="selected"' : '';
             $contentArray[] = '<option value="' . $value . '"' . $selectAttribute . '>' . $label . '</option>';
         }
 

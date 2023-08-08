@@ -29,7 +29,7 @@
         "phpstan/phpstan": "^1.10",
         "rector/rector": "^1.0",
         "symplify/easy-coding-standard": "12.1.14",
-        "symplify/phpstan-rules": "12.4.8"
+        "symplify/phpstan-rules": "^13.0.0"
     },
     "autoload": {
         "psr-4": {
@@ -73,11 +73,9 @@
             "[ -e ./.Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs ] || composer install",
             "[ -d ./reports/php_checkstyle ] || mkdir -p reports/php_checkstyle/",
             "./.code-quality/configure-checkstyle.sh",
-            "./.Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs -d memory_limit=1G --standard=PHPCompatibility --colors --ignore=*/.Build/*,*.min.js -p . --runtime-set testVersion 7.4",
-            "./.Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs -d memory_limit=1G --standard=PHPCompatibility --colors --ignore=*/.Build/*,*.min.js -p . --runtime-set testVersion 8.0",
-            "./.Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs -d memory_limit=1G --standard=PHPCompatibility --colors --ignore=*/.Build/*,*.min.js -p . --runtime-set testVersion 8.1",
-            "./.Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs -d memory_limit=1G --standard=PHPCompatibility --colors --ignore=*/.Build/*,*.min.js -p . --runtime-set testVersion 8.2",
-            "./.Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs -d memory_limit=1G --standard=PHPCompatibility --colors --ignore=*/.Build/*,*.min.js -p . --runtime-set testVersion 8.3"
+            "./.Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs -d memory_limit=1G --standard=PHPCompatibility --colors --ignore=*/.Build/* -p . --runtime-set testVersion 8.0",
+            "./.Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs -d memory_limit=1G --standard=PHPCompatibility --colors --ignore=*/.Build/* -p . --runtime-set testVersion 8.1",
+            "./.Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs -d memory_limit=1G --standard=PHPCompatibility --colors --ignore=*/.Build/* -p . --runtime-set testVersion 8.2"
         ],
         "code-check-pipeline": [
             "@composer code-style",
@@ -93,7 +91,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "9.1.x-dev"
+            "dev-main": "11.0.x-dev"
         },
         "typo3/cms": {
             "extension-key": "update_refindex",
