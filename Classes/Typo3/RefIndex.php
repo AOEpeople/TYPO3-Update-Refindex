@@ -126,7 +126,7 @@ class RefIndex
             ->select('uid')
             ->from($tableName)
             ->execute()
-            ->fetchAllAssociative();
+            ->fetchAll(FetchMode::ASSOCIATIVE);
 
         // Update refindex table for all records in table
         foreach ($allRecs as $recdat) {
@@ -186,7 +186,7 @@ class RefIndex
 
         $allRecs = $queryBuilder
             ->execute()
-            ->fetchAllAssociative();
+            ->fetchAll(FetchMode::ASSOCIATIVE);
 
         $recUidList = [0];
         foreach ($allRecs as $recdat) {
