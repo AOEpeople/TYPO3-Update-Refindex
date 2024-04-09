@@ -1,14 +1,6 @@
 name: Tests
 
-on:
-  push:
-    branches:
-      - '**'
-      - '!TYPO3V8'
-  pull_request:
-    branches:
-      - '**'
-      - '!TYPO3V8'
+on: [ push, pull_request ]
 
 jobs:
   build:
@@ -18,16 +10,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        typo3: [ ^9.5, ^10.4 , ^11.5]
+        typo3: [ ^11.5]
         php: [ '7.4', '8.0', '8.1', '8.2', '8.3' ]
-        exclude:
-          - typo3: ^11.5
-            php: 7.4
-        include:
-          - typo3: ^11.5
-            php: 8.0
-          - typo3: ^11.5
-            php: 8.2
 
     steps:
       - name: Start database server
