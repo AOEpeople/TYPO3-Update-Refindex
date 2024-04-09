@@ -17,7 +17,7 @@ composer require aoe/update-refindex
 
 ## Copyright / License
 
-Copyright: (c) 2016 - 2022, AOE GmbH
+Copyright: (c) 2016 - 2024, AOE GmbH
 License: GPLv3, <http://www.gnu.org/licenses/gpl-3.0.en.html>
 
 ## Contributing

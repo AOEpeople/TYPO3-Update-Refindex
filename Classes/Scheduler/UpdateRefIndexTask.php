@@ -52,10 +52,8 @@ class UpdateRefIndexTask extends AbstractTask
 
     /**
      * execute the task
-     *
-     * @return boolean
      */
-    public function execute()
+    public function execute(): bool
     {
         $shellExitCode = true;
         try {

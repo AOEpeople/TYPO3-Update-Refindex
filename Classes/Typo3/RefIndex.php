@@ -126,7 +126,7 @@ class RefIndex
             ->select('uid')
             ->from($tableName)
             ->execute()
-            ->fetchAll(FetchMode::ASSOCIATIVE);
+            ->fetchAllAssociative();
 
         // Update refindex table for all records in table
         foreach ($allRecs as $recdat) {
@@ -136,7 +136,7 @@ class RefIndex
 
         $recUidList = $this->getDeletableRecUidListFromTable($tableName);
 
-        if (!empty($recUidList)) {
+        if ($recUidList !== []) {
             // Searching lost indexes for this table:
             $queryBuilder = $this->getQueryBuilderForTable('sys_refindex');
             foreach (array_chunk($recUidList, self::ARRAY_CHUNK_SIZE) as $recUidChunk) {
@@ -162,11 +162,9 @@ class RefIndex
     }
 
     /**
-     * @param string $tableName
-     *
      * @return int[]
      */
-    protected function getDeletableRecUidListFromTable($tableName): array
+    protected function getDeletableRecUidListFromTable(string $tableName): array
     {
         // Select all records from table, including deleted records
         $subQueryBuilder = $this->getQueryBuilderForTable($tableName);
@@ -188,7 +186,7 @@ class RefIndex
 
         $allRecs = $queryBuilder
             ->execute()
-            ->fetchAll(FetchMode::ASSOCIATIVE);
+            ->fetchAllAssociative();
 
         $recUidList = [0];
         foreach ($allRecs as $recdat) {
