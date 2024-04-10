@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         typo3: [ ^11.5]
-        php: [ '7.4', '8.0', '8.1', '8.2', '8.3' ]
+        php: [ '8.0', '8.1', '8.2', '8.3' ]
 
     steps:
       - name: Start database server
@@ -55,8 +55,8 @@ jobs:
           export "UNIT_XML"=.Build/vendor/typo3/testing-framework/Resources/Core/Build/UnitTests-v10.xml 
           .Build/bin/phpunit --coverage-filter Classes --coverage-clover=unittest-coverage.clover --colors -c $UNIT_XML Tests/Unit/
 
-      - name: Upload coverage results to Scrutinizer
-        if: matrix.typo3 == '^11.5' && matrix.php == '7.4'
-        run: |
-          wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover unittest-coverage.clover
+      - name: Upload functional coverage results to Scrutinizer
+        uses: sudo-bot/action-scrutinizer@latest
+        if: matrix.typo3 == '^11.5' && matrix.php == '8.3'
+        with:
+          cli-args: "--format=php-clover functional-coverage.clover --revision=${{ github.event.pull_request.head.sha || github.sha }}"

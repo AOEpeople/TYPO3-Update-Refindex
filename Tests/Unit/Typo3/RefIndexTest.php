@@ -33,7 +33,7 @@ use PDO;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use ReflectionClass;
+use ReflectionMethod;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Expression\ExpressionBuilder;
@@ -91,11 +91,8 @@ class RefIndexTest extends UnitTestCase
         GeneralUtility::addInstance(ReferenceIndex::class, $referenceIndex);
 
         $refIndex = new RefIndex();
-
-        #self::assertInstanceOf(ReferenceIndex::class,$this->callInaccessibleMethod($refIndex, 'getReferenceIndex'));
-        $reflectionClass = new ReflectionClass($refIndex);
-        $method = $reflectionClass->getMethod('getReferenceIndex');
-        $method->invokeArgs($refIndex, []);
+        $reflectionMethod = new ReflectionMethod($refIndex, 'getReferenceIndex');
+        $reflectionMethod->invokeArgs($refIndex, []);
     }
 
     public function testUpdate(): void
@@ -167,10 +164,8 @@ class RefIndexTest extends UnitTestCase
 
         $queryBuilderProphet->createNamedParameter($existingTables, Connection::PARAM_STR_ARRAY)->willReturn(':dcValue1');
 
-        #$this->callInaccessibleMethod($refIndex, 'deleteLostIndexes');
-        $reflectionClass = new ReflectionClass($refIndex);
-        $method = $reflectionClass->getMethod('deleteLostIndexes');
-        $method->invokeArgs($refIndex, []);
+        $reflectionMethod = new ReflectionMethod($refIndex, 'deleteLostIndexes');
+        $reflectionMethod->invokeArgs($refIndex, []);
     }
 
     public function testUpdateTable(): void
@@ -234,10 +229,8 @@ class RefIndexTest extends UnitTestCase
         $refTableQueryBuilderProphet->createNamedParameter($table, PDO::PARAM_STR)->willReturn(':dcValue1');
         $refTableQueryBuilderProphet->createNamedParameter([0], Connection::PARAM_INT_ARRAY)->willReturn(':dcValue2');
 
-        #$this->callInaccessibleMethod($refIndex, 'updateTable', $table);
-        $reflectionClass = new ReflectionClass($refIndex);
-        $method = $reflectionClass->getMethod('updateTable');
-        $method->invokeArgs($refIndex, [$table]);
+        $reflectionMethod = new ReflectionMethod($refIndex, 'updateTable');
+        $reflectionMethod->invokeArgs($refIndex, [$table]);
     }
 
     public function testGetDeletableRecUidListFromTable(): void
@@ -287,10 +280,8 @@ class RefIndexTest extends UnitTestCase
 
         $refTableQueryBuilderProphet->createNamedParameter($table, PDO::PARAM_STR)->willReturn(':dcValue1');
 
-        #self::assertSame([0], $this->callInaccessibleMethod($refIndex, 'getDeletableRecUidListFromTable', $table));
-        $reflectionClass = new ReflectionClass($refIndex);
-        $method = $reflectionClass->getMethod('getDeletableRecUidListFromTable');
-        $method->invokeArgs($refIndex, [$table]);
+        $reflectionMethod = new ReflectionMethod($refIndex, 'getDeletableRecUidListFromTable');
+        $reflectionMethod->invokeArgs($refIndex, [$table]);
     }
 
     /**
