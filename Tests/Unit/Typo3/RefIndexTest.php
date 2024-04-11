@@ -333,7 +333,7 @@ class RefIndexTest extends UnitTestCase
      */
     private function matcherCount($matcher): int
     {
-        $requiredVersion = '8.3.0';
+        $requiredVersion = '8.1.0';
 
         if (version_compare(PHP_VERSION, $requiredVersion) > 0) {
             return $matcher->numberOfInvocations();
