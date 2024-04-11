@@ -58,7 +58,7 @@ class RefIndexTest extends UnitTestCase
     /**
      * @var ObjectProphecy|ConnectionPool
      */
-    private ?\Prophecy\Prophecy\ObjectProphecy $connectionPoolProphet = null;
+    private ?ObjectProphecy $connectionPoolProphet = null;
 
     /**
      * Cleans up the environment after running a test.
@@ -92,6 +92,7 @@ class RefIndexTest extends UnitTestCase
 
         $refIndex = new RefIndex();
         $reflectionMethod = new ReflectionMethod($refIndex, 'getReferenceIndex');
+        $reflectionMethod->setAccessible(true);
         $reflectionMethod->invokeArgs($refIndex, []);
     }
 
@@ -118,7 +119,7 @@ class RefIndexTest extends UnitTestCase
         $refIndex->expects($matcher)
             ->method('updateTable')
             ->willReturnCallback(function ($selectedTable) use ($matcher, $selectedTables): void {
-                match ($matcher->numberOfInvocations()) {
+                match ($this->matcherCount($matcher)) {
                     1 => $this->assertSame($selectedTables[0], $selectedTable),
                     2 => $this->assertSame($selectedTables[1], $selectedTable),
                 };
@@ -165,6 +166,7 @@ class RefIndexTest extends UnitTestCase
         $queryBuilderProphet->createNamedParameter($existingTables, Connection::PARAM_STR_ARRAY)->willReturn(':dcValue1');
 
         $reflectionMethod = new ReflectionMethod($refIndex, 'deleteLostIndexes');
+        $reflectionMethod->setAccessible(true);
         $reflectionMethod->invokeArgs($refIndex, []);
     }
 
@@ -181,7 +183,7 @@ class RefIndexTest extends UnitTestCase
         $referenceIndexMock->expects($matcher)
             ->method('updateRefIndexTable')
             ->willReturnCallback(function ($actualTable, $actualParam1, $actualParam2) use ($matcher, $table): void {
-                match ($matcher->numberOfInvocations()) {
+                match ($this->matcherCount($matcher)) {
                     1 => $this->assertEquals([$table, 1, false], [$actualTable, $actualParam1, $actualParam2]),
                     2 => $this->assertEquals([$table, 2, false], [$actualTable, $actualParam1, $actualParam2]),
                 };
@@ -230,6 +232,7 @@ class RefIndexTest extends UnitTestCase
         $refTableQueryBuilderProphet->createNamedParameter([0], Connection::PARAM_INT_ARRAY)->willReturn(':dcValue2');
 
         $reflectionMethod = new ReflectionMethod($refIndex, 'updateTable');
+        $reflectionMethod->setAccessible(true);
         $reflectionMethod->invokeArgs($refIndex, [$table]);
     }
 
@@ -281,6 +284,7 @@ class RefIndexTest extends UnitTestCase
         $refTableQueryBuilderProphet->createNamedParameter($table, PDO::PARAM_STR)->willReturn(':dcValue1');
 
         $reflectionMethod = new ReflectionMethod($refIndex, 'getDeletableRecUidListFromTable');
+        $reflectionMethod->setAccessible(true);
         $reflectionMethod->invokeArgs($refIndex, [$table]);
     }
 
@@ -314,7 +318,7 @@ class RefIndexTest extends UnitTestCase
     /**
      * @return ObjectProphecy|ConnectionPool
      */
-    private function getConnectionPoolProphet(): ?\Prophecy\Prophecy\ObjectProphecy
+    private function getConnectionPoolProphet(): ?ObjectProphecy
     {
         if ($this->connectionPoolProphet === null) {
             $this->connectionPoolProphet = $this->prophesize(ConnectionPool::class);
@@ -322,5 +326,19 @@ class RefIndexTest extends UnitTestCase
         }
 
         return $this->connectionPoolProphet;
+    }
+
+    /**
+     * This can be ignored in codestyles and removed after switching to php 8.3 fully
+     */
+    private function matcherCount($matcher): int
+    {
+        $requiredVersion = '8.3.0';
+
+        if (version_compare(PHP_VERSION, $requiredVersion) > 0) {
+            return $matcher->numberOfInvocations();
+        }
+
+        return $matcher->getInvocationCount();
     }
 }

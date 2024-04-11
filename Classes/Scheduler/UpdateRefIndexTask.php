@@ -62,7 +62,7 @@ class UpdateRefIndexTask extends AbstractTask
             $this->getRefIndex()
                 ->setSelectedTables($selectedTables)
                 ->update();
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             $shellExitCode = false;
         }
 
