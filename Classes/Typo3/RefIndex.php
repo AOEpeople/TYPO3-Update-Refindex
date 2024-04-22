@@ -136,7 +136,7 @@ class RefIndex
 
         $recUidList = $this->getDeletableRecUidListFromTable($tableName);
 
-        if (!empty($recUidList)) {
+        if ($recUidList !== []) {
             // Searching lost indexes for this table:
             $queryBuilder = $this->getQueryBuilderForTable('sys_refindex');
             foreach (array_chunk($recUidList, self::ARRAY_CHUNK_SIZE) as $recUidChunk) {
@@ -162,11 +162,9 @@ class RefIndex
     }
 
     /**
-     * @param string $tableName
-     *
      * @return int[]
      */
-    protected function getDeletableRecUidListFromTable($tableName): array
+    protected function getDeletableRecUidListFromTable(string $tableName): array
     {
         // Select all records from table, including deleted records
         $subQueryBuilder = $this->getQueryBuilderForTable($tableName);

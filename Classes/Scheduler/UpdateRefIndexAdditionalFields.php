@@ -71,7 +71,7 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
         array &$taskInfo,
         $task,
         SchedulerModuleController $schedulerModule
-    ) {
+    ): array {
         if ($task !== null && !$task instanceof UpdateRefIndexTask) {
             throw new InvalidArgumentException('Task not of type UpdateRefIndexTask', 1622561874);
         }
@@ -145,9 +145,8 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
      * Gets the HTML markup of a checkbox input field
      *
      * @param boolean $isChecked
-     * @return string
      */
-    private function getCheckbox($isChecked)
+    private function getCheckbox($isChecked): string
     {
         $checked = $isChecked ? 'checked="checked" ' : '';
         $content = '<input type="hidden" name="tx_scheduler[' . self::FIELD_ALL_TABLES . ']" value="0" />';
@@ -158,10 +157,8 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
 
     /**
      * Gets array with tables, which can be selected as options
-     *
-     * @return array
      */
-    private function getOptionsForSelectBox()
+    private function getOptionsForSelectBox(): array
     {
         $existingTables = array_keys($GLOBALS['TCA']);
         sort($existingTables);
@@ -176,10 +173,8 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
 
     /**
      * Generates HTML selectbox for field 'selectedTables'
-     *
-     * @return string
      */
-    private function getSelectBox(array $selected)
+    private function getSelectBox(array $selected): string
     {
         $contentArray = [
             '<select id="task_' . self::FIELD_SELECTED_TABLES . '" name="tx_scheduler[' . self::FIELD_SELECTED_TABLES . '][]" size="20" multiple="multiple" class="form-control">',

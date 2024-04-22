@@ -1,4 +1,5 @@
 <?php
+
 namespace Aoe\UpdateRefindex\Tests\Unit\Scheduler;
 
 /***************************************************************
@@ -27,7 +28,7 @@ namespace Aoe\UpdateRefindex\Tests\Unit\Scheduler;
 
 use Aoe\UpdateRefindex\Scheduler\UpdateRefIndexTask;
 use Aoe\UpdateRefindex\Typo3\RefIndex;
-use Nimut\TestingFramework\TestCase\UnitTestCase;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * Tests class UpdateRefIndexTask
@@ -54,12 +55,12 @@ class UpdateRefIndexTaskTest extends UnitTestCase
     {
         $this->refIndex = $this->getMockBuilder(RefIndex::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getExistingTables', 'setSelectedTables', 'update'])
+            ->onlyMethods(['getExistingTables', 'setSelectedTables', 'update'])
             ->getMock();
 
         $this->task = $this->getMockBuilder(UpdateRefIndexTask::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRefIndex'])
+            ->onlyMethods(['getRefIndex'])
             ->getMock();
 
         $this->task->expects(self::any())->method('getRefIndex')->willReturn($this->refIndex);
@@ -74,10 +75,7 @@ class UpdateRefIndexTaskTest extends UnitTestCase
         unset($this->task);
     }
 
-    /**
-     * @test
-     */
-    public function executeWithSelectedTablesWillHandleSelectedTables()
+    public function testExecuteWithSelectedTablesWillHandleSelectedTables(): void
     {
         $selectedTables = ['table1', 'table2'];
 
@@ -93,10 +91,7 @@ class UpdateRefIndexTaskTest extends UnitTestCase
         $this->task->execute();
     }
 
-    /**
-     * @test
-     */
-    public function executeWithUpdateAllTablesWillHandleAllExistingTables()
+    public function testExecuteWithUpdateAllTablesWillHandleAllExistingTables(): void
     {
         $allTables = ['table1', 'table2', 'table3', 'table4', 'table5'];
 
