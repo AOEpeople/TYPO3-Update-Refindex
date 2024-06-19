@@ -26,8 +26,6 @@ namespace Aoe\UpdateRefindex\Typo3;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use Doctrine\DBAL\FetchMode;
-use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -111,7 +109,7 @@ class RefIndex
                         $queryBuilder->createNamedParameter($this->getExistingTables(), Connection::PARAM_STR_ARRAY)
                     )
             );
-        $queryBuilder->execute();
+        $queryBuilder->executeStatement();
     }
 
     /**
@@ -125,8 +123,8 @@ class RefIndex
         $allRecs = $queryBuilder
             ->select('uid')
             ->from($tableName)
-            ->execute()
-            ->fetchAll(FetchMode::ASSOCIATIVE);
+            ->executeQuery()
+            ->fetchAllAssociative();
 
         // Update refindex table for all records in table
         foreach ($allRecs as $recdat) {
@@ -146,7 +144,7 @@ class RefIndex
                         $queryBuilder->expr()
                             ->eq(
                                 'tablename',
-                                $queryBuilder->createNamedParameter($tableName, PDO::PARAM_STR)
+                                $queryBuilder->createNamedParameter($tableName)
                             )
                     )
                     ->andWhere(
@@ -156,7 +154,7 @@ class RefIndex
                                 $queryBuilder->createNamedParameter($recUidChunk, Connection::PARAM_INT_ARRAY)
                             )
                     );
-                $queryBuilder->execute();
+                $queryBuilder->executeStatement();
             }
         }
     }
@@ -179,14 +177,14 @@ class RefIndex
             ->from('sys_refindex')
             ->where(
                 $queryBuilder->expr()
-                    ->eq('tablename', $queryBuilder->createNamedParameter($tableName, PDO::PARAM_STR))
+                    ->eq('tablename', $queryBuilder->createNamedParameter($tableName))
             )
             ->andWhere($queryBuilder->expr()->notIn('recuid', $subQueryBuilder->getSQL()))
             ->groupBy('recuid');
 
         $allRecs = $queryBuilder
-            ->execute()
-            ->fetchAll(FetchMode::ASSOCIATIVE);
+            ->executeQuery()
+            ->fetchAllAssociative();
 
         $recUidList = [0];
         foreach ($allRecs as $recdat) {
