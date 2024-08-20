@@ -1,16 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Anonymous variable in a `\\$GLOBALS\\['LANG'\\]\\-\\>\\.\\.\\.\\(\\)` method call can lead to false dead methods\\. Make sure the variable type is known$#"
-			count: 2
-			path: ../Classes/Scheduler/UpdateRefIndexAdditionalFields.php
-
-		-
-			message: "#^Relative file path \"LLL\\:EXT\\:update_refindex/Resources/Private/Language/locallang\\.xlf\" is not allowed, use absolute one with __DIR__$#"
-			count: 1
-			path: ../Classes/Scheduler/UpdateRefIndexAdditionalFields.php
-
-		-
 			message: "#^Cannot call method fetchAll\\(\\) on Doctrine\\\\DBAL\\\\Result\\|int\\.$#"
 			count: 2
 			path: ../Classes/Typo3/RefIndex.php

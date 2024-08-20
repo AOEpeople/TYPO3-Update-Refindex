@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Aoe\UpdateRefindex\Typo3;
 
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2021 AOE GmbH <dev@aoe.com>
+ *  (c) 2023 AOE GmbH <dev@aoe.com>
  *
  *  All rights reserved
  *
@@ -36,9 +38,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * scheduler-task to update refindex of TYPO3
- *
- * @package update_refindex
- * @subpackage Typo3
  */
 class RefIndex
 {
