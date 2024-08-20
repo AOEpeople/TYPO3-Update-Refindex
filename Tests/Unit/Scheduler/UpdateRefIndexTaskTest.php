@@ -28,6 +28,7 @@ namespace Aoe\UpdateRefindex\Tests\Unit\Scheduler;
 
 use Aoe\UpdateRefindex\Scheduler\UpdateRefIndexTask;
 use Aoe\UpdateRefindex\Typo3\RefIndex;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
@@ -38,15 +39,9 @@ use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
  */
 class UpdateRefIndexTaskTest extends UnitTestCase
 {
-    /**
-     * @var RefIndex
-     */
-    protected $refIndex;
+    protected MockObject $refIndex;
 
-    /**
-     * @var UpdateRefIndexTask
-     */
-    protected $task;
+    protected MockObject $task;
 
     /**
      * Prepares the environment before running a test.

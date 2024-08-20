@@ -8,11 +8,9 @@ use Rector\CodingStyle\Rector\PostInc\PostIncDecToPreIncDecRector;
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\Cast\RecastingRemovalRector;
 use Rector\DeadCode\Rector\Property\RemoveUnusedPrivatePropertyRector;
-use Rector\EarlyReturn\Rector\If_\ChangeAndIfToEarlyReturnRector;
 use Rector\Naming\Rector\ClassMethod\RenameVariableToMatchNewTypeRector;
 use Rector\Naming\Rector\Foreach_\RenameForeachValueVariableToMatchMethodCallReturnTypeRector;
 use Rector\Php74\Rector\LNumber\AddLiteralSeparatorToNumberRector;
-use Rector\Privatization\Rector\Class_\FinalizeClassesWithoutChildrenRector;
 use Rector\Set\ValueObject\SetList;
 use Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictConstructorRector;
 
@@ -36,9 +34,6 @@ return static function (RectorConfig $rectorConfig): void {
         [
             RecastingRemovalRector::class,
             PostIncDecToPreIncDecRector::class,
-            FinalizeClassesWithoutChildrenRector::class,
-            ChangeAndIfToEarlyReturnRector::class,
-
             IssetOnPropertyObjectToPropertyExistsRector::class,
             FlipTypeControlToUseExclusiveTypeRector::class,
             RenameVariableToMatchNewTypeRector::class,
