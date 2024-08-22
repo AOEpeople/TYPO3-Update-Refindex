@@ -58,6 +58,11 @@
             "[ -e .Build/bin/phpunit ] || composer update",
             "TYPO3_PATH_WEB=.Build/Web .Build/bin/phpunit -c Tests/UnitTests.xml Tests/Unit"
         ],
+        "test:unit-xdebug": [
+            "[ -e .Build/bin/phpunit ] || composer update",
+            "XDEBUG_SESSION=1 PHP_IDE_CONFIG=\"serverName=localhost\" XDEBUG_MODE=debug TYPO3_PATH_WEB=.Build/Web .Build/bin/phpunit -c Tests/UnitTests.xml Tests/Unit"
+        ],
+
         "code-style": [
             "[ -e ./.Build/bin/rector ] || composer install",
             "./.Build/bin/ecs check --config .code-quality/ecs.php",
