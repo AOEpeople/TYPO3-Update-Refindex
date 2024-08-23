@@ -30,15 +30,11 @@ namespace Aoe\UpdateRefindex\Typo3;
 
 use Doctrine\DBAL\ArrayParameterType;
 use PDO;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * scheduler-task to update refindex of TYPO3
- */
 class RefIndex
 {
     /**
@@ -113,10 +109,6 @@ class RefIndex
         $queryBuilder->executeStatement();
     }
 
-    /**
-     * update table
-     * this code is inspired by the code of method 'updateIndex' in class '\TYPO3\CMS\Core\Database\ReferenceIndex'
-     */
     protected function updateTable(string $tableName): void
     {
         // Select all records from table, including deleted records
@@ -134,7 +126,6 @@ class RefIndex
         }
 
         $recUidList = $this->getDeletableRecUidListFromTable($tableName);
-
         if ($recUidList !== []) {
             // Searching lost indexes for this table:
             $queryBuilder = $this->getQueryBuilderForTable('sys_refindex');

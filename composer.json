@@ -24,6 +24,7 @@
     },
     "require-dev": {
         "typo3/testing-framework": "^8.0",
+        "phpspec/prophecy": "^1.0.0",
         "phpunit/phpcov": "*",
         "phpcompatibility/php-compatibility": "^9.3",
         "phpstan/phpstan": "^1.10",
