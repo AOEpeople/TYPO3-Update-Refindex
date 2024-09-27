@@ -27,12 +27,13 @@ namespace Aoe\UpdateRefindex\Tests\Unit\Typo3;
  ***************************************************************/
 
 use Aoe\UpdateRefindex\Typo3\RefIndex;
-use Doctrine\DBAL\Driver\Statement;
-use Doctrine\DBAL\FetchMode;
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\Result;
 use PDO;
+use PHPUnit\Framework\MockObject\MockObject;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Prophecy\Prophet;
 use ReflectionMethod;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -43,30 +44,26 @@ use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
-/**
- * Tests class RefIndex
- *
- * @package update_refindex
- * @subpackage Tests
- */
 class RefIndexTest extends UnitTestCase
 {
-    use ProphecyTrait;
+    public ConnectionPool $connectionPool;
 
-    public $connectionPool;
+    private Prophet $prophet;
 
-    /**
-     * @var ObjectProphecy|ConnectionPool
-     */
-    private ?ObjectProphecy $connectionPoolProphet = null;
+    private ObjectProphecy|ConnectionPool|null $connectionPoolProphet = null;
 
-    /**
-     * Cleans up the environment after running a test.
-     */
+    private ?ConnectionPool $connectionPoolMock = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->prophet = new Prophet();
+    }
+
     protected function tearDown(): void
     {
         GeneralUtility::purgeInstances();
-        unset($this->connectionPool);
+        unset($this->connectionPoolMock);
 
         parent::tearDown();
     }
@@ -92,7 +89,6 @@ class RefIndexTest extends UnitTestCase
 
         $refIndex = new RefIndex();
         $reflectionMethod = new ReflectionMethod($refIndex, 'getReferenceIndex');
-        $reflectionMethod->setAccessible(true);
         $reflectionMethod->invokeArgs($refIndex, []);
     }
 
@@ -114,9 +110,13 @@ class RefIndexTest extends UnitTestCase
         $refIndex = $this->getMockBuilder(RefIndex::class)
             ->onlyMethods(['getExistingTables', 'updateTable', 'deleteLostIndexes'])
             ->getMock();
-        $refIndex->expects(self::any())->method('getExistingTables')->willReturn($selectedTables);
+        $refIndex
+            ->expects(self::any())
+            ->method('getExistingTables')
+            ->willReturn($selectedTables);
         $matcher = $this->exactly(2);
-        $refIndex->expects($matcher)
+        $refIndex
+            ->expects($matcher)
             ->method('updateTable')
             ->willReturnCallback(function ($selectedTable) use ($matcher, $selectedTables): void {
                 match ($this->matcherCount($matcher)) {
@@ -124,7 +124,9 @@ class RefIndexTest extends UnitTestCase
                     2 => $this->assertSame($selectedTables[1], $selectedTable),
                 };
             });
-        $refIndex->expects(self::once())->method('deleteLostIndexes');
+        $refIndex
+            ->expects(self::once())
+            ->method('deleteLostIndexes');
 
         $refIndex->setSelectedTables($selectedTables);
         $refIndex->update();
@@ -132,12 +134,19 @@ class RefIndexTest extends UnitTestCase
 
     public function testUpdateDoesNothingWhenTableIsNotConfiguredInTCA(): void
     {
-        $refIndex = $this->getMockBuilder(RefIndex::class)
+        $refIndex = $this
+            ->getMockBuilder(RefIndex::class)
             ->onlyMethods(['getExistingTables', 'updateTable', 'deleteLostIndexes'])
             ->getMock();
-        $refIndex->expects(self::any())->method('getExistingTables')->willReturn(['table_1', 'table_2']);
-        $refIndex->expects(self::never())->method('updateTable');
-        $refIndex->expects(self::never())->method('deleteLostIndexes');
+        $refIndex->expects(self::any())
+            ->method('getExistingTables')
+            ->willReturn(['table_1', 'table_2']);
+        $refIndex
+            ->expects(self::never())
+            ->method('updateTable');
+        $refIndex
+            ->expects(self::never())
+            ->method('deleteLostIndexes');
 
         $refIndex->setSelectedTables(['some_table_not_configured_in_tca']);
         $refIndex->update();
@@ -146,40 +155,64 @@ class RefIndexTest extends UnitTestCase
     public function testDeleteLostIndexes(): void
     {
         $existingTables = ['table_1', 'table_2'];
-        $refIndex = $this->getMockBuilder(RefIndex::class)
-            ->onlyMethods(['getExistingTables'])
+        $refIndexMock = $this
+            ->getMockBuilder(RefIndex::class)
+            ->onlyMethods(['getExistingTables', 'getQueryBuilderForTable'])
             ->getMock();
-        $refIndex->expects(self::once())->method('getExistingTables')->willReturn($existingTables);
+        $refIndexMock
+            ->method('getExistingTables')
+            ->willReturn($existingTables);
 
-        $queryBuilderProphet = $this->getQueryBuilderProphet('sys_refindex');
-        $queryBuilderMock = $queryBuilderProphet->reveal();
+        $queryBuilderMock = $this
+            ->getQueryBuilderMock('sys_refindex');
 
-        $queryBuilderProphet->delete('sys_refindex')
-            ->shouldBeCalledOnce()
-            ->willReturn($queryBuilderMock);
-        $queryBuilderProphet->where('`tablename` NOT IN (:dcValue1)')
-            ->shouldBeCalledOnce()
-            ->willReturn($queryBuilderMock);
-        $queryBuilderProphet->execute()
-            ->shouldBeCalledOnce();
+        /** @var MockObject|ExpressionBuilder $expressionBuilderMock */
+        $expressionBuilderMock = $queryBuilderMock->expr();
 
-        $queryBuilderProphet->createNamedParameter($existingTables, Connection::PARAM_STR_ARRAY)->willReturn(':dcValue1');
+        $expressionBuilderMock
+            ->expects($this->once())
+            ->method('notIn')
+            ->with('tablename', ':dcValue1')
+            ->willReturn('`tablename` NOT IN (:dcValue1)');
 
-        $reflectionMethod = new ReflectionMethod($refIndex, 'deleteLostIndexes');
-        $reflectionMethod->setAccessible(true);
-        $reflectionMethod->invokeArgs($refIndex, []);
+        $queryBuilderMock
+            ->expects($this->once())
+            ->method('createNamedParameter')
+            ->with($existingTables, ArrayParameterType::INTEGER)
+            ->willReturn(':dcValue1');
+
+        $queryBuilderMock
+            ->expects($this->once())
+            ->method('where')
+            ->with('`tablename` NOT IN (:dcValue1)')
+            ->willReturnSelf();
+
+        $queryBuilderMock
+            ->expects($this->once())
+            ->method('delete')
+            ->with('sys_refindex')
+            ->willReturnSelf();
+
+        $queryBuilderMock
+            ->expects($this->once())
+            ->method('executeStatement')
+            ->willReturn(1);
+
+        $reflectionMethod = new ReflectionMethod($refIndexMock, 'deleteLostIndexes');
+        $reflectionMethod->invokeArgs($refIndexMock, []);
     }
 
     public function testUpdateTable(): void
     {
         $table = 'test_table';
         $records = [['uid' => 1], ['uid' => 2]];
-        $referenceIndexMock = $this->getMockBuilder(ReferenceIndex::class)
+        $referenceIndexMock = $this
+            ->getMockBuilder(ReferenceIndex::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['updateRefIndexTable'])
             ->getMock();
-        $matcher = $this->exactly(2);
 
+        $matcher = $this->exactly(2);
         $referenceIndexMock->expects($matcher)
             ->method('updateRefIndexTable')
             ->willReturnCallback(function ($actualTable, $actualParam1, $actualParam2) use ($matcher, $table): void {
@@ -189,51 +222,63 @@ class RefIndexTest extends UnitTestCase
                 };
             });
 
-        $refIndex = $this->getMockBuilder(RefIndex::class)
+        $refIndexMock = $this->getMockBuilder(RefIndex::class)
             ->onlyMethods(['getReferenceIndex', 'getDeletableRecUidListFromTable'])
             ->getMock();
-        $refIndex->method('getReferenceIndex')
+        $refIndexMock
+            ->method('getReferenceIndex')
             ->willReturn($referenceIndexMock);
-        $refIndex->method('getDeletableRecUidListFromTable')
+        $refIndexMock
+            ->method('getDeletableRecUidListFromTable')
             ->willReturn([0]);
 
         $testTableQueryBuilderProphet = $this->getQueryBuilderProphet($table);
         $selectQueryBuilderMock = $testTableQueryBuilderProphet->reveal();
 
-        $statementProphet = $this->prophesize(Statement::class);
-        $statementProphet->fetchAll(FetchMode::ASSOCIATIVE)->shouldBeCalledOnce()->willReturn($records);
+        $resultMock = $this->getMockBuilder(Result::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $resultMock
+            ->method('fetchAllAssociative')
+            ->willReturn($records);
 
-        $testTableQueryBuilderProphet->select('uid')
+        $testTableQueryBuilderProphet
+            ->select('uid')
             ->shouldBeCalledOnce()
             ->willReturn($selectQueryBuilderMock);
-        $testTableQueryBuilderProphet->from($table)
+        $testTableQueryBuilderProphet
+            ->from($table)
             ->shouldBeCalledOnce()
             ->willReturn($selectQueryBuilderMock);
-        $testTableQueryBuilderProphet->execute()
+        $testTableQueryBuilderProphet
+            ->executeQuery()
             ->shouldBeCalledOnce()
-            ->willReturn($statementProphet->reveal());
+            ->willReturn($resultMock);
 
         $refTableQueryBuilderProphet = $this->getQueryBuilderProphet('sys_refindex');
         $refTableQueryBuilderMock = $refTableQueryBuilderProphet->reveal();
 
-        $refTableQueryBuilderProphet->delete('sys_refindex')
+        $refTableQueryBuilderProphet
+            ->delete('sys_refindex')
             ->shouldBeCalledOnce()
             ->willReturn($refTableQueryBuilderMock);
-        $refTableQueryBuilderProphet->where('`tablename` = :dcValue1')
+        $refTableQueryBuilderProphet
+            ->where('`tablename` = :dcValue1')
             ->shouldBeCalledOnce()
             ->willReturn($refTableQueryBuilderMock);
-        $refTableQueryBuilderProphet->andWhere('`recuid` IN (:dcValue2)')
+        $refTableQueryBuilderProphet
+            ->andWhere('`recuid` IN (:dcValue2)')
             ->shouldBeCalledOnce()
             ->willReturn($refTableQueryBuilderMock);
-        $refTableQueryBuilderProphet->execute()
+        $refTableQueryBuilderProphet
+            ->execute()
             ->shouldBeCalledOnce();
 
         $refTableQueryBuilderProphet->createNamedParameter($table, PDO::PARAM_STR)->willReturn(':dcValue1');
         $refTableQueryBuilderProphet->createNamedParameter([0], Connection::PARAM_INT_ARRAY)->willReturn(':dcValue2');
 
-        $reflectionMethod = new ReflectionMethod($refIndex, 'updateTable');
-        $reflectionMethod->setAccessible(true);
-        $reflectionMethod->invokeArgs($refIndex, [$table]);
+        $reflectionMethod = new ReflectionMethod($refIndexMock, 'updateTable');
+        $reflectionMethod->invokeArgs($refIndexMock, [$table]);
     }
 
     public function testGetDeletableRecUidListFromTable(): void
@@ -243,71 +288,131 @@ class RefIndexTest extends UnitTestCase
         $refIndex = $this->getMockBuilder(RefIndex::class)->getMock();
 
         $testTableQueryBuilderProphet = $this->getQueryBuilderProphet($table);
-        $testTableQueryBuilderProphet->getSQL()
-            ->shouldBeCalledOnce()
-            ->willReturn('SELECT `uid` FROM `test_table`');
-
         $selectQueryBuilderMock = $testTableQueryBuilderProphet->reveal();
 
-        $testTableQueryBuilderProphet->select('uid')
-            ->shouldBeCalledOnce()
+        $testTableQueryBuilderProphet
+            ->getSQL()
+            ->willReturn('SELECT `uid` FROM `test_table`');
+
+        $testTableQueryBuilderProphet
+            ->select('uid')
             ->willReturn($selectQueryBuilderMock);
-        $testTableQueryBuilderProphet->from($table)
-            ->shouldBeCalledOnce()
+        $testTableQueryBuilderProphet
+            ->from($table)
             ->willReturn($selectQueryBuilderMock);
 
-        $statementProphet = $this->prophesize(Statement::class);
-        $statementProphet->fetchAll(FetchMode::ASSOCIATIVE)->shouldBeCalledOnce()->willReturn([]);
+        $resultMock = $this
+            ->getMockBuilder(Result::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $resultMock
+            ->method('fetchAllAssociative')
+            ->willReturn([]);
 
         $refTableQueryBuilderProphet = $this->getQueryBuilderProphet('sys_refindex');
         $refTableQueryBuilderMock = $refTableQueryBuilderProphet->reveal();
 
-        $refTableQueryBuilderProphet->select('recuid')
+        $refTableQueryBuilderProphet
+            ->select('recuid')
             ->shouldBeCalledOnce()
             ->willReturn($refTableQueryBuilderMock);
-        $refTableQueryBuilderProphet->from('sys_refindex')
+        $refTableQueryBuilderProphet
+            ->from('sys_refindex')
             ->shouldBeCalledOnce()
             ->willReturn($refTableQueryBuilderMock);
-        $refTableQueryBuilderProphet->where('`tablename` = :dcValue1')
+        $refTableQueryBuilderProphet
+            ->where('`tablename` = :dcValue1')
             ->shouldBeCalledOnce()
             ->willReturn($refTableQueryBuilderMock);
-        $refTableQueryBuilderProphet->andWhere('`recuid` NOT IN (SELECT `uid` FROM `test_table`)')
-            ->shouldBeCalledOnce()
-            ->willReturn($refTableQueryBuilderMock);
-        $refTableQueryBuilderProphet->groupBy('recuid')
-            ->shouldBeCalledOnce()
-            ->willReturn($refTableQueryBuilderMock);
-        $refTableQueryBuilderProphet->execute()
-            ->shouldBeCalledOnce()
-            ->willReturn($statementProphet->reveal());
 
-        $refTableQueryBuilderProphet->createNamedParameter($table, PDO::PARAM_STR)->willReturn(':dcValue1');
+        $refTableQueryBuilderProphet
+            ->andWhere('`recuid` NOT IN (SELECT `uid` FROM `test_table`)')
+            ->shouldBeCalledOnce()
+            ->willReturn($refTableQueryBuilderMock);
+        $refTableQueryBuilderProphet
+            ->groupBy('recuid')
+            ->shouldBeCalledOnce()
+            ->willReturn($refTableQueryBuilderMock);
+        $refTableQueryBuilderProphet
+            ->executeQuery()
+            ->shouldBeCalledOnce()
+            ->willReturn($resultMock);
+
+        $refTableQueryBuilderProphet
+            ->createNamedParameter($table, PDO::PARAM_STR)
+            ->willReturn(':dcValue1');
 
         $reflectionMethod = new ReflectionMethod($refIndex, 'getDeletableRecUidListFromTable');
-        $reflectionMethod->setAccessible(true);
         $reflectionMethod->invokeArgs($refIndex, [$table]);
     }
 
-    /**
-     * @return ObjectProphecy|QueryBuilder
-     */
-    private function getQueryBuilderProphet(string $table)
+    private function getQueryBuilderMock(string $table): MockObject|QueryBuilder
     {
-        $connectionProphet = $this->prophesize(Connection::class);
+        $connectionMock = $this
+            ->getMockBuilder(Connection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connectionMock
+            ->method('quoteIdentifier')
+            ->willReturnCallback(static fn ($arguments): string => '`' . $arguments[0] . '`');
+
+        $queryRestrictionMock = $this
+            ->getMockBuilder(QueryRestrictionContainerInterface::class)
+            ->getMock();
+        $queryRestrictionMock
+            ->method('removeAll')
+            ->willReturnSelf();
+
+        $expressionBuilderMock = $this
+            ->getMockBuilder(ExpressionBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $queryBuilderMock = $this
+            ->getMockBuilder(QueryBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $queryBuilderMock
+            ->method('getRestrictions')
+            ->willReturn($queryRestrictionMock);
+        $queryBuilderMock
+            ->method('expr')
+            ->willReturn($expressionBuilderMock);
+
+        $connectionPoolMock = $this->getConnectionPoolMock();
+        $connectionPoolMock
+            ->method('getQueryBuilderForTable')
+            ->with($table)
+            ->willReturn($queryBuilderMock);
+
+        return $queryBuilderMock;
+    }
+
+    private function getQueryBuilderProphet(string $table): MockObject|ObjectProphecy
+    {
+        $connectionProphet = $this->prophet->prophesize(Connection::class);
         $connectionProphet->quoteIdentifier(Argument::cetera())->will(static fn ($arguments): string => '`' . $arguments[0] . '`');
 
-        $queryRestrictionProphet = $this->prophesize(QueryRestrictionContainerInterface::class);
+        $queryRestrictionProphet = $this->prophet->prophesize(QueryRestrictionContainerInterface::class);
         $queryRestrictionProphet->removeAll()
             ->shouldBeCalled();
 
-        $queryBuilderProphet = $this->prophesize(QueryBuilder::class);
-        $queryBuilderProphet->getRestrictions()
+        $queryBuilderProphet = $this
+            ->prophet
+            ->prophesize(QueryBuilder::class);
+        $queryBuilderProphet
+            ->getRestrictions()
             ->willReturn($queryRestrictionProphet->reveal());
-        $queryBuilderProphet->expr()
+        $queryBuilderProphet
+            ->expr()
             ->willReturn(
                 GeneralUtility::makeInstance(ExpressionBuilder::class, $connectionProphet->reveal())
             );
+        $queryBuilderProphet
+            ->executeStatement()
+            ->willReturn(2);
 
+        /** @var ObjectProphecy|MockObject $connectionPoolProphet */
         $connectionPoolProphet = $this->getConnectionPoolProphet();
         $connectionPoolProphet->getQueryBuilderForTable($table)
             ->willReturn($queryBuilderProphet->reveal());
@@ -316,12 +421,27 @@ class RefIndexTest extends UnitTestCase
     }
 
     /**
+     * @return MockObject|ConnectionPool
+     */
+    private function getConnectionPoolMock(): ?ConnectionPool
+    {
+        if ($this->connectionPoolMock === null) {
+            $this->connectionPoolMock = $this
+                ->getMockBuilder(ConnectionPool::class)
+                ->getMock();
+            GeneralUtility::addInstance(ConnectionPool::class, $this->connectionPoolMock);
+        }
+
+        return $this->connectionPoolMock;
+    }
+
+    /**
      * @return ObjectProphecy|ConnectionPool
      */
     private function getConnectionPoolProphet(): ?ObjectProphecy
     {
         if ($this->connectionPoolProphet === null) {
-            $this->connectionPoolProphet = $this->prophesize(ConnectionPool::class);
+            $this->connectionPoolProphet = $this->prophet->prophesize(ConnectionPool::class);
             GeneralUtility::addInstance(ConnectionPool::class, $this->connectionPoolProphet->reveal());
         }
 

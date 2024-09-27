@@ -28,17 +28,13 @@ namespace Aoe\UpdateRefindex\Typo3;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use Doctrine\DBAL\FetchMode;
+use Doctrine\DBAL\ArrayParameterType;
 use PDO;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * scheduler-task to update refindex of TYPO3
- */
 class RefIndex
 {
     /**
@@ -107,16 +103,12 @@ class RefIndex
                 $queryBuilder->expr()
                     ->notIn(
                         'tablename',
-                        $queryBuilder->createNamedParameter($this->getExistingTables(), Connection::PARAM_STR_ARRAY)
+                        $queryBuilder->createNamedParameter($this->getExistingTables(), ArrayParameterType::INTEGER)
                     )
             );
-        $queryBuilder->execute();
+        $queryBuilder->executeStatement();
     }
 
-    /**
-     * update table
-     * this code is inspired by the code of method 'updateIndex' in class '\TYPO3\CMS\Core\Database\ReferenceIndex'
-     */
     protected function updateTable(string $tableName): void
     {
         // Select all records from table, including deleted records
@@ -124,8 +116,8 @@ class RefIndex
         $allRecs = $queryBuilder
             ->select('uid')
             ->from($tableName)
-            ->execute()
-            ->fetchAll(FetchMode::ASSOCIATIVE);
+            ->executeQuery()
+            ->fetchAllAssociative();
 
         // Update refindex table for all records in table
         foreach ($allRecs as $recdat) {
@@ -134,7 +126,6 @@ class RefIndex
         }
 
         $recUidList = $this->getDeletableRecUidListFromTable($tableName);
-
         if ($recUidList !== []) {
             // Searching lost indexes for this table:
             $queryBuilder = $this->getQueryBuilderForTable('sys_refindex');
@@ -152,17 +143,14 @@ class RefIndex
                         $queryBuilder->expr()
                             ->in(
                                 'recuid',
-                                $queryBuilder->createNamedParameter($recUidChunk, Connection::PARAM_INT_ARRAY)
+                                $queryBuilder->createNamedParameter($recUidChunk, ArrayParameterType::INTEGER)
                             )
                     );
-                $queryBuilder->execute();
+                $queryBuilder->executeStatement();
             }
         }
     }
 
-    /**
-     * @return int[]
-     */
     protected function getDeletableRecUidListFromTable(string $tableName): array
     {
         // Select all records from table, including deleted records
@@ -184,8 +172,8 @@ class RefIndex
             ->groupBy('recuid');
 
         $allRecs = $queryBuilder
-            ->execute()
-            ->fetchAll(FetchMode::ASSOCIATIVE);
+            ->executeQuery()
+            ->fetchAllAssociative();
 
         $recUidList = [0];
         foreach ($allRecs as $recdat) {
