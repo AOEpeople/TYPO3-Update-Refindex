@@ -75,12 +75,13 @@ class UpdateRefIndexTaskTest extends UnitTestCase
         $selectedTables = ['table1', 'table2'];
 
         $this->refIndex
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setSelectedTables')
             ->with($selectedTables)
             ->willReturn($this->refIndex);
         $this->refIndex
-            ->expects(self::once())->method('update');
+            ->expects($this->once())
+            ->method('update');
 
         $this->task->setSelectedTables($selectedTables);
         $this->task->execute();
@@ -95,12 +96,13 @@ class UpdateRefIndexTaskTest extends UnitTestCase
             ->method('getExistingTables')
             ->willReturn($allTables);
         $this->refIndex
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setSelectedTables')
             ->with($allTables)
             ->willReturn($this->refIndex);
         $this->refIndex
-            ->expects(self::once())->method('update');
+            ->expects($this->once())
+            ->method('update');
 
         $this->task->setUpdateAllTables(true);
         $this->task->execute();

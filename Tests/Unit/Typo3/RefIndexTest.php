@@ -50,7 +50,7 @@ class RefIndexTest extends UnitTestCase
 
     private Prophet $prophet;
 
-    private ObjectProphecy|ConnectionPool|null $connectionPoolProphet = null;
+    private ObjectProphecy | null $connectionPoolProphet = null;
 
     private ?ConnectionPool $connectionPoolMock = null;
 
@@ -125,7 +125,7 @@ class RefIndexTest extends UnitTestCase
                 };
             });
         $refIndex
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('deleteLostIndexes');
 
         $refIndex->setSelectedTables($selectedTables);
@@ -142,10 +142,10 @@ class RefIndexTest extends UnitTestCase
             ->method('getExistingTables')
             ->willReturn(['table_1', 'table_2']);
         $refIndex
-            ->expects(self::never())
+            ->expects($this->never())
             ->method('updateTable');
         $refIndex
-            ->expects(self::never())
+            ->expects($this->never())
             ->method('deleteLostIndexes');
 
         $refIndex->setSelectedTables(['some_table_not_configured_in_tca']);
@@ -346,7 +346,7 @@ class RefIndexTest extends UnitTestCase
         $reflectionMethod->invokeArgs($refIndex, [$table]);
     }
 
-    private function getQueryBuilderMock(string $table): MockObject|QueryBuilder
+    private function getQueryBuilderMock(string $table): MockObject | QueryBuilder
     {
         $connectionMock = $this
             ->getMockBuilder(Connection::class)
@@ -354,7 +354,7 @@ class RefIndexTest extends UnitTestCase
             ->getMock();
         $connectionMock
             ->method('quoteIdentifier')
-            ->willReturnCallback(static fn ($arguments): string => '`' . $arguments[0] . '`');
+            ->willReturnCallback(static fn (string $arguments): string => '`' . $arguments[0] . '`');
 
         $queryRestrictionMock = $this
             ->getMockBuilder(QueryRestrictionContainerInterface::class)
@@ -380,6 +380,7 @@ class RefIndexTest extends UnitTestCase
             ->willReturn($expressionBuilderMock);
 
         $connectionPoolMock = $this->getConnectionPoolMock();
+        $this->assertInstanceOf(ConnectionPool::class, $connectionPoolMock);
         $connectionPoolMock
             ->method('getQueryBuilderForTable')
             ->with($table)
@@ -388,7 +389,7 @@ class RefIndexTest extends UnitTestCase
         return $queryBuilderMock;
     }
 
-    private function getQueryBuilderProphet(string $table): MockObject|ObjectProphecy
+    private function getQueryBuilderProphet(string $table): MockObject | ObjectProphecy
     {
         $connectionProphet = $this->prophet->prophesize(Connection::class);
         $connectionProphet->quoteIdentifier(Argument::cetera())->will(static fn ($arguments): string => '`' . $arguments[0] . '`');
@@ -420,10 +421,7 @@ class RefIndexTest extends UnitTestCase
         return $queryBuilderProphet;
     }
 
-    /**
-     * @return MockObject|ConnectionPool
-     */
-    private function getConnectionPoolMock(): ?ConnectionPool
+    private function getConnectionPoolMock(): MockObject | ConnectionPool | null
     {
         if ($this->connectionPoolMock === null) {
             $this->connectionPoolMock = $this
@@ -435,10 +433,7 @@ class RefIndexTest extends UnitTestCase
         return $this->connectionPoolMock;
     }
 
-    /**
-     * @return ObjectProphecy|ConnectionPool
-     */
-    private function getConnectionPoolProphet(): ?ObjectProphecy
+    private function getConnectionPoolProphet(): ObjectProphecy | ConnectionPool
     {
         if ($this->connectionPoolProphet === null) {
             $this->connectionPoolProphet = $this->prophet->prophesize(ConnectionPool::class);

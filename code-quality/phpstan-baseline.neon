@@ -1,0 +1,49 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Match expression does not handle remaining values\: int\<min, 0\>\|int\<3, max\>$#'
+			identifier: match.unhandled
+			count: 2
+			path: ../Tests/Unit/Typo3/RefIndexTest.php
+
+		-
+			message: '#^Method Aoe\\UpdateRefindex\\Tests\\Unit\\Typo3\\RefIndexTest\:\:getConnectionPoolProphet\(\) return type with generic class Prophecy\\Prophecy\\ObjectProphecy does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: ../Tests/Unit/Typo3/RefIndexTest.php
+
+		-
+			message: '#^Method Aoe\\UpdateRefindex\\Tests\\Unit\\Typo3\\RefIndexTest\:\:getQueryBuilderProphet\(\) return type with generic class Prophecy\\Prophecy\\ObjectProphecy does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: ../Tests/Unit/Typo3/RefIndexTest.php
+
+		-
+			message: '#^Method Aoe\\UpdateRefindex\\Tests\\Unit\\Typo3\\RefIndexTest\:\:matcherCount\(\) has parameter \$matcher with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: ../Tests/Unit/Typo3/RefIndexTest.php
+
+		-
+			message: '#^PHPDoc tag @var for variable \$connectionPoolProphet contains generic class Prophecy\\Prophecy\\ObjectProphecy but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: ../Tests/Unit/Typo3/RefIndexTest.php
+
+		-
+			message: '#^PHPDoc tag @var with type PHPUnit\\Framework\\MockObject\\MockObject\|Prophecy\\Prophecy\\ObjectProphecy is not subtype of native type Prophecy\\Prophecy\\ObjectProphecy\|TYPO3\\CMS\\Core\\Database\\ConnectionPool\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: ../Tests/Unit/Typo3/RefIndexTest.php
+
+		-
+			message: '#^PHPDoc tag @var with type PHPUnit\\Framework\\MockObject\\MockObject\|TYPO3\\CMS\\Core\\Database\\Query\\Expression\\ExpressionBuilder is not subtype of native type TYPO3\\CMS\\Core\\Database\\Query\\Expression\\ExpressionBuilder\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: ../Tests/Unit/Typo3/RefIndexTest.php
+
+		-
+			message: '#^Property Aoe\\UpdateRefindex\\Tests\\Unit\\Typo3\\RefIndexTest\:\:\$connectionPoolProphet with generic class Prophecy\\Prophecy\\ObjectProphecy does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: ../Tests/Unit/Typo3/RefIndexTest.php

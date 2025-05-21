@@ -61,9 +61,10 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
     /**
      * Gets additional fields to render in the form to add/edit a task
      *
-     * @param array $taskInfo Values of the fields from the add/edit task form
-     * @param \TYPO3\CMS\Scheduler\Task\AbstractTask $task The task object being edited. Null when adding a task!
-     * @param \TYPO3\CMS\Scheduler\Controller\SchedulerModuleController $schedulerModule Reference to the scheduler backend module
+     * @param array                     $taskInfo        Values of the fields from the add/edit task form
+     * @param AbstractTask             $task            The task object being edited. Null when adding a task!
+     * @param SchedulerModuleController $schedulerModule Reference to the scheduler backend module
+     *
      * @return array A two dimensional array: array('fieldId' => array('code' => '', 'label' => '', 'cshKey' => '', 'cshLabel' => ''))
      */
     public function getAdditionalFields(
@@ -105,8 +106,8 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
     /**
      * Takes care of saving the additional fields' values in the task's object
      *
-     * @param array $submittedData An array containing the data submitted by the add/edit task form
-     * @param \TYPO3\CMS\Scheduler\Task\AbstractTask $task Reference to the scheduler backend module
+     * @param array        $submittedData An array containing the data submitted by the add/edit task form
+     * @param AbstractTask $task          Reference to the scheduler backend module
      */
     public function saveAdditionalFields(array $submittedData, AbstractTask $task): void
     {
@@ -122,8 +123,9 @@ class UpdateRefIndexAdditionalFields implements AdditionalFieldProviderInterface
     /**
      * Validates the additional fields' values
      *
-     * @param array $submittedData An array containing the data submitted by the add/edit task form
-     * @param \TYPO3\CMS\Scheduler\Controller\SchedulerModuleController $schedulerModule Reference to the scheduler backend module
+     * @param array                     $submittedData   An array containing the data submitted by the add/edit task form
+     * @param SchedulerModuleController $schedulerModule Reference to the scheduler backend module
+     *
      * @return bool TRUE if validation was ok (or selected class is not relevant), FALSE otherwise
      */
     public function validateAdditionalFields(

@@ -19,18 +19,18 @@
     "require": {
         "php": "^8.1",
         "typo3/cms-core": "^12.4",
-        "typo3/cms-scheduler": "*",
+        "typo3/cms-scheduler": "^12.4",
         "ext-pdo": "*"
     },
     "require-dev": {
-        "typo3/testing-framework": "^8.0",
+        "typo3/testing-framework": "^8.0 || ^9.0",
         "phpspec/prophecy": "^1.0.0",
         "phpunit/phpcov": "*",
         "phpcompatibility/php-compatibility": "^9.3",
-        "phpstan/phpstan": "^1.10",
-        "rector/rector": "^1.0",
+        "phpstan/phpstan": "^2.1",
+        "rector/rector": "^2.0",
         "symplify/easy-coding-standard": "^12.0",
-        "symplify/phpstan-rules": "^13.0.0"
+        "symplify/phpstan-rules": "^14.6"
     },
     "autoload": {
         "psr-4": {
@@ -55,6 +55,9 @@
             "mkdir -p .Build/Web/typo3conf/ext/",
             "[ -L .Build/Web/typo3conf/ext/update_refindex ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/update_refindex"
         ],
+        "test": [
+            "@composer test:unit"
+        ],
         "test:unit": [
             "[ -e .Build/bin/phpunit ] || composer update",
             "TYPO3_PATH_WEB=.Build/Web .Build/bin/phpunit -c Tests/UnitTests.xml Tests/Unit"
@@ -63,28 +66,31 @@
             "[ -e .Build/bin/phpunit ] || composer update",
             "XDEBUG_SESSION=1 PHP_IDE_CONFIG=\"serverName=localhost\" XDEBUG_MODE=debug TYPO3_PATH_WEB=.Build/Web .Build/bin/phpunit -c Tests/UnitTests.xml Tests/Unit"
         ],
-
         "code-style": [
-            "[ -e ./.Build/bin/rector ] || composer install",
-            "./.Build/bin/ecs check --config .code-quality/ecs.php",
-            "./.Build/bin/rector process --dry-run --config .code-quality/rector.php"
+            "[ -e .Build/bin/rector ] || composer install",
+            ".Build/bin/ecs check --config code-quality/ecs.php",
+            ".Build/bin/rector process --dry-run --config code-quality/rector.php"
+        ],
+        "code-style-upgrade": [
+            "[ -e .Build/bin/rector ] || composer install",
+            ".Build/bin/rector process --dry-run --config code-quality/rector-upgrade.php"
         ],
         "code-analysis": [
-            "./.Build/bin/phpstan analyse -c .code-quality/phpstan.neon --memory-limit=1G"
+            "[ -e .Build/bin/phpstan ] || composer install",
+            ".Build/bin/phpstan analyse -c code-quality/phpstan.neon --memory-limit=1G"
         ],
         "code-analysis--baseline": [
-            "./.Build/bin/phpstan analyse -c .code-quality/phpstan.neon --memory-limit=1G --generate-baseline"
+            ".Build/bin/phpstan analyse -c code-quality/phpstan.neon --memory-limit=1G --generate-baseline"
         ],
         "code-compatibility": [
-            "[ -e ./.Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs ] || composer update",
             "[ -d ./reports/php_checkstyle ] || mkdir -p reports/php_checkstyle/",
-            "./.code-quality/configure-checkstyle.sh",
-            "./.Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs -d memory_limit=1G --standard=PHPCompatibility --colors --ignore=*/.Build/* -p . --runtime-set testVersion 8.1",
-            "./.Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs -d memory_limit=1G --standard=PHPCompatibility --colors --ignore=*/.Build/* -p . --runtime-set testVersion 8.2",
-            "./.Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs -d memory_limit=1G --standard=PHPCompatibility --colors --ignore=*/.Build/* -p . --runtime-set testVersion 8.3"
+            "code-quality/configure-checkstyle.sh",
+            ".Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs -d memory_limit=1G --standard=PHPCompatibility --colors --ignore=*/.Build/*,*/vendor/*,*/node_modules/*,*.css,*.js,*/Tests/* -p . --runtime-set testVersion 8.3 --report=summary",
+            ".Build/vendor/symplify/easy-coding-standard/vendor/squizlabs/php_codesniffer/bin/phpcs -d memory_limit=1G --standard=PHPCompatibility --colors --ignore=*/.Build/*,*/vendor/*,*/node_modules/*,*.css,*.js,*/Tests/* -p . --runtime-set testVersion 8.4 --report=summary"
         ],
         "code-check-pipeline": [
             "@composer code-style",
+            "@composer code-style-upgrade",
             "@composer code-analysis",
             "@composer code-compatibility"
         ],

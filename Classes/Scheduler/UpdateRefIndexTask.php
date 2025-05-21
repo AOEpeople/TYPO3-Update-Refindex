@@ -47,7 +47,7 @@ class UpdateRefIndexTask extends AbstractTask
      */
     public string $updateRefindexSelectedTables;
 
-    private ?object $refIndex = null;
+    private ?RefIndex $refIndex = null;
 
     /**
      * execute the task

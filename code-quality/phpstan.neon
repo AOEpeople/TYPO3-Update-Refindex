@@ -4,14 +4,25 @@ includes:
     - ../.Build/vendor/symplify/phpstan-rules/config/services/services.neon
 
 parameters:
-    level: 6
+    level: 8
     paths:
         - "../Classes/"
-
+        - "../Configuration/"
+        - "../Resources/"
+        - "../Tests/"
+        - "../code-quality/"
     ignoreErrors:
         - identifier: missingType.iterableValue
-
+        - identifier: notIdentical.alwaysTrue
+        -
+            identifier: method.notFound
+            path: ../Tests/
+        -
+            identifier: return.unusedType
+            path: ../Tests/Unit/Typo3/RefIndexTest.php
     inferPrivatePropertyTypeFromConstructor: true
+    scanDirectories:
+      - ../.Build/vendor
 
 services:
     -
