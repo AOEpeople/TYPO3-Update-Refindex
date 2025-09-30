@@ -82,9 +82,7 @@ class RefIndexTest extends UnitTestCase
 
     public function testGetReferenceIndex(): void
     {
-        $referenceIndex = $this->getMockBuilder(ReferenceIndex::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $referenceIndex = $this->createMock(ReferenceIndex::class);
         GeneralUtility::addInstance(ReferenceIndex::class, $referenceIndex);
 
         $refIndex = new RefIndex();
@@ -111,7 +109,6 @@ class RefIndexTest extends UnitTestCase
             ->onlyMethods(['getExistingTables', 'updateTable', 'deleteLostIndexes'])
             ->getMock();
         $refIndex
-            ->expects(self::any())
             ->method('getExistingTables')
             ->willReturn($selectedTables);
         $matcher = $this->exactly(2);
@@ -138,7 +135,7 @@ class RefIndexTest extends UnitTestCase
             ->getMockBuilder(RefIndex::class)
             ->onlyMethods(['getExistingTables', 'updateTable', 'deleteLostIndexes'])
             ->getMock();
-        $refIndex->expects(self::any())
+        $refIndex
             ->method('getExistingTables')
             ->willReturn(['table_1', 'table_2']);
         $refIndex
@@ -235,9 +232,7 @@ class RefIndexTest extends UnitTestCase
         $testTableQueryBuilderProphet = $this->getQueryBuilderProphet($table);
         $selectQueryBuilderMock = $testTableQueryBuilderProphet->reveal();
 
-        $resultMock = $this->getMockBuilder(Result::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resultMock = $this->createMock(Result::class);
         $resultMock
             ->method('fetchAllAssociative')
             ->willReturn($records);
@@ -285,7 +280,7 @@ class RefIndexTest extends UnitTestCase
     {
         $table = 'test_table';
 
-        $refIndex = $this->getMockBuilder(RefIndex::class)->getMock();
+        $refIndex = $this->createMock(RefIndex::class);
 
         $testTableQueryBuilderProphet = $this->getQueryBuilderProphet($table);
         $selectQueryBuilderMock = $testTableQueryBuilderProphet->reveal();
@@ -301,10 +296,7 @@ class RefIndexTest extends UnitTestCase
             ->from($table)
             ->willReturn($selectQueryBuilderMock);
 
-        $resultMock = $this
-            ->getMockBuilder(Result::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resultMock = $this->createMock(Result::class);
         $resultMock
             ->method('fetchAllAssociative')
             ->willReturn([]);
@@ -348,30 +340,19 @@ class RefIndexTest extends UnitTestCase
 
     private function getQueryBuilderMock(string $table): MockObject | QueryBuilder
     {
-        $connectionMock = $this
-            ->getMockBuilder(Connection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $connectionMock = $this->createMock(Connection::class);
         $connectionMock
             ->method('quoteIdentifier')
             ->willReturnCallback(static fn (string $arguments): string => '`' . $arguments[0] . '`');
 
-        $queryRestrictionMock = $this
-            ->getMockBuilder(QueryRestrictionContainerInterface::class)
-            ->getMock();
+        $queryRestrictionMock = $this->createMock(QueryRestrictionContainerInterface::class);
         $queryRestrictionMock
             ->method('removeAll')
             ->willReturnSelf();
 
-        $expressionBuilderMock = $this
-            ->getMockBuilder(ExpressionBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $expressionBuilderMock = $this->createMock(ExpressionBuilder::class);
 
-        $queryBuilderMock = $this
-            ->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $queryBuilderMock = $this->createMock(QueryBuilder::class);
         $queryBuilderMock
             ->method('getRestrictions')
             ->willReturn($queryRestrictionMock);
@@ -421,12 +402,10 @@ class RefIndexTest extends UnitTestCase
         return $queryBuilderProphet;
     }
 
-    private function getConnectionPoolMock(): MockObject | ConnectionPool | null
+    private function getConnectionPoolMock(): \PHPUnit\Framework\MockObject\MockObject|\TYPO3\CMS\Core\Database\ConnectionPool
     {
         if ($this->connectionPoolMock === null) {
-            $this->connectionPoolMock = $this
-                ->getMockBuilder(ConnectionPool::class)
-                ->getMock();
+            $this->connectionPoolMock = $this->createMock(ConnectionPool::class);
             GeneralUtility::addInstance(ConnectionPool::class, $this->connectionPoolMock);
         }
 

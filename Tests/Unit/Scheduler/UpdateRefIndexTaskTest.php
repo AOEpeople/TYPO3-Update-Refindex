@@ -58,16 +58,10 @@ class UpdateRefIndexTaskTest extends UnitTestCase
             ->onlyMethods(['getRefIndex'])
             ->getMock();
 
-        $this->task->expects(self::any())->method('getRefIndex')->willReturn($this->refIndex);
-    }
+        $this->task->method('getRefIndex')
+            ->willReturn($this->refIndex);
 
-    /**
-     * Cleans up the environment after running a test.
-     */
-    protected function tearDown(): void
-    {
-        unset($this->refIndex);
-        unset($this->task);
+        parent::setUp();
     }
 
     public function testExecuteWithSelectedTablesWillHandleSelectedTables(): void
@@ -92,7 +86,6 @@ class UpdateRefIndexTaskTest extends UnitTestCase
         $allTables = ['table1', 'table2', 'table3', 'table4', 'table5'];
 
         $this->refIndex
-            ->expects(self::any())
             ->method('getExistingTables')
             ->willReturn($allTables);
         $this->refIndex
